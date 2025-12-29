@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crispy Chicken - HR & Compliance System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- CSS VARIABLES --- */
         :root {
@@ -34,13 +35,43 @@
 
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Cairo', sans-serif;
             background-color: var(--cc-gray);
             margin: 0;
             padding: 0;
             color: var(--cc-black);
             transition: background-color 0.3s, color 0.3s;
             min-height: 100vh;
+        }
+
+        /* RTL Support */
+        [dir="rtl"] body {
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+        }
+
+        [dir="rtl"] .form-grid {
+            direction: rtl;
+        }
+
+        [dir="rtl"] .modal-header,
+        [dir="rtl"] .modal-footer {
+            flex-direction: row-reverse;
+        }
+
+        [dir="rtl"] .document-item {
+            flex-direction: row-reverse;
+        }
+
+        [dir="rtl"] .logo-area {
+            flex-direction: row-reverse;
+        }
+
+        [dir="rtl"] .controls {
+            flex-direction: row-reverse;
+        }
+
+        [dir="rtl"] .header-actions {
+            flex-direction: row-reverse;
         }
 
         /* --- HEADER --- */
@@ -59,13 +90,16 @@
         .header-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--cc-text-muted); transition: color 0.2s; position: relative; padding: 8px; }
         .header-btn:hover { color: var(--cc-black); }
         .badge-notify { position: absolute; top: -5px; right: -5px; background: var(--color-danger); color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; display: none; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .lang-toggle { background: var(--cc-red); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
 
         /* --- CONTROLS --- */
         .controls { padding: 15px 24px; background: var(--cc-white); display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--cc-border); flex-wrap: wrap; }
         .search-wrapper { flex: 1; min-width: 200px; position: relative; }
         .search-wrapper input { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid var(--cc-border); border-radius: 20px; font-size: 14px; background-color: var(--cc-gray); color: var(--cc-black); }
+        [dir="rtl"] .search-wrapper input { padding: 10px 35px 10px 10px; }
         .search-wrapper input:focus { border-color: var(--cc-red); }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888; }
+        [dir="rtl"] .search-icon { left: auto; right: 12px; }
 
         button { padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; color: white; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
         button:hover { opacity: 0.9; transform: translateY(-1px); }
@@ -90,11 +124,15 @@
         table { width: 100%; border-collapse: collapse; min-width: 1800px; }
         
         th { background-color: var(--cc-gray); color: var(--cc-text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; padding: 12px 10px; text-align: left; border-bottom: 2px solid var(--cc-border); position: sticky; top: 0; z-index: 10; }
+        [dir="rtl"] th { text-align: right; }
         td { padding: 10px; border-bottom: 1px solid var(--cc-border); font-size: 13px; color: var(--cc-black); vertical-align: middle; }
+        [dir="rtl"] td { text-align: right; }
         tr:hover { background-color: var(--cc-table-hover); }
         
         tr.new-staff-row { background-color: rgba(59, 130, 246, 0.03); border-left: 3px solid #3b82f6; }
+        [dir="rtl"] tr.new-staff-row { border-left: none; border-right: 3px solid #3b82f6; }
         tr.alert-row { background-color: rgba(245, 158, 11, 0.03); border-left: 3px solid #f59e0b; }
+        [dir="rtl"] tr.alert-row { border-left: none; border-right: 3px solid #f59e0b; }
 
         /* Status & Badges */
         .badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
@@ -107,6 +145,7 @@
         .date-expired { color: #dc3545; font-weight: bold; font-size: 11px; }
 
         .next-step-badge { display: inline-block; font-size: 11px; color: #555; background: #eee; padding: 2px 6px; border-radius: 4px; border-left: 3px solid #666; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        [dir="rtl"] .next-step-badge { border-left: none; border-right: 3px solid #666; }
 
         .action-btn { background: none; border: none; cursor: pointer; padding: 6px; font-size: 15px; border-radius: 4px; transition: all 0.2s; }
         .action-btn:hover { background-color: rgba(0,0,0,0.05); }
@@ -126,11 +165,21 @@
         .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         .form-group { margin-bottom: 5px; }
         .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 11px; color: var(--cc-text-muted); }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid var(--cc-border); border-radius: 4px; font-size: 12px; background: var(--cc-white); color: var(--cc-black); }
-        .form-group input:focus, .form-group select:focus { border-color: var(--cc-red); box-shadow: 0 0 0 2px rgba(228, 0, 43, 0.1); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--cc-border); border-radius: 4px; font-size: 12px; background: var(--cc-white); color: var(--cc-black); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--cc-red); box-shadow: 0 0 0 2px rgba(228, 0, 43, 0.1); }
         .form-group input[type="date"] { min-height: 36px; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
 
         .required label::after { content: " *"; color: var(--color-danger); }
+
+        /* --- DOCUMENT UPLOAD --- */
+        .upload-area { border: 1px dashed var(--cc-border); border-radius: 4px; padding: 15px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s; }
+        .upload-area:hover { border-color: var(--cc-red); background-color: rgba(228, 0, 43, 0.05); }
+        .document-list { margin-top: 10px; max-height: 200px; overflow-y: auto; }
+        .document-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: var(--cc-gray); border-radius: 4px; margin-bottom: 5px; }
+        .document-name { font-size: 12px; display: flex; align-items: center; gap: 8px; flex: 1; }
+        .document-date { font-size: 10px; color: var(--cc-text-muted); }
+        .document-actions { display: flex; gap: 5px; }
 
         /* --- PROFESSIONAL REPORT STYLES (PDF/PRINT) --- */
         #printArea { display: none; }
@@ -144,6 +193,7 @@
         .report-section h3 { font-size: 16px; color: var(--cc-red); border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0; margin-bottom: 10px; }
         .report-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; }
         .report-table th, .report-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
+        [dir="rtl"] .report-table th, [dir="rtl"] .report-table td { text-align: right; }
         .report-table th { background-color: #f9f9f9; color: #333; }
         
         .status-stamp { 
@@ -215,11 +265,14 @@
         <div class="logo-area">
             <div class="chef-icon">👨‍🍳</div>
             <div class="app-title">
-                <h1>CRISPY CHICKEN HR</h1>
-                <span>Compliance & Onboarding Tracker</span>
+                <h1 data-i18n="appTitle">CRISPY CHICKEN HR</h1>
+                <span data-i18n="appSubtitle">Compliance & Onboarding Tracker</span>
             </div>
         </div>
         <div class="header-actions">
+            <button class="lang-toggle" onclick="toggleLanguage()">
+                <span id="langText">العربية</span>
+            </button>
             <button class="header-btn" title="Toggle Dark Mode" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
             <button class="header-btn" title="Daily Alerts & 15-Day Warning" onclick="showNotifications()">
                 <i class="fas fa-bell"></i>
@@ -232,61 +285,61 @@
     <div class="controls">
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Search ID, Name..." onkeyup="filterData()">
+            <input type="text" id="searchInput" placeholder="Search ID, Name..." data-i18n-placeholder="searchPlaceholder" onkeyup="filterData()">
         </div>
         <div style="flex:1"></div>
         <select id="typeFilter" onchange="filterData()" style="padding:8px; border-radius:4px; border:1px solid #ccc;">
-            <option value="">All Staff</option>
-            <option value="new">🔵 New Staff (Onboarding)</option>
-            <option value="existing">🟢 Existing Staff</option>
-            <option value="alert">🟠 Needs Attention</option>
+            <option value="" data-i18n="allStaff">All Staff</option>
+            <option value="new" data-i18n="newStaff">🔵 New Staff (Onboarding)</option>
+            <option value="existing" data-i18n="existingStaff">🟢 Existing Staff</option>
+            <option value="alert" data-i18n="needsAttention">🟠 Needs Attention</option>
         </select>
-        <button class="btn-export" onclick="exportToCSV()"><i class="fas fa-download"></i> Excel</button>
-        <button class="btn-add" onclick="openAddModal()"><i class="fas fa-plus"></i> New Staff</button>
+        <button class="btn-export" onclick="exportToCSV()"><i class="fas fa-download"></i> <span data-i18n="exportBtn">Excel</span></button>
+        <button class="btn-add" onclick="openAddModal()"><i class="fas fa-plus"></i> <span data-i18n="addStaffBtn">New Staff</span></button>
     </div>
 
     <!-- Stats -->
     <div class="dashboard">
         <div class="stat-card stat-total">
             <div class="stat-number" id="totalCount">0</div>
-            <div class="stat-label">Total Staff</div>
+            <div class="stat-label" data-i18n="totalStaff">Total Staff</div>
         </div>
         <div class="stat-card stat-new">
             <div class="stat-number" id="newCount" style="color: #3b82f6;">0</div>
-            <div class="stat-label">Onboarding</div>
+            <div class="stat-label" data-i18n="onboarding">Onboarding</div>
         </div>
         <div class="stat-card stat-active">
             <div class="stat-number" id="activeCount" style="color: #10b981;">0</div>
-            <div class="stat-label">Active / Handed Over</div>
+            <div class="stat-label" data-i18n="activeHandedOver">Active / Handed Over</div>
         </div>
         <div class="stat-card stat-alert">
             <div class="stat-number" id="alertCount" style="color: #f59e0b;">0</div>
-            <div class="stat-label">Action Required</div>
+            <div class="stat-label" data-i18n="actionRequired">Action Required</div>
         </div>
     </div>
 
     <!-- Table -->
     <div class="table-container">
         <div class="table-header">
-            <div style="font-weight:bold;">Employee Directory & Follow-ups</div>
+            <div style="font-weight:bold;" data-i18n="employeeDirectory">Employee Directory & Follow-ups</div>
             <div style="font-size:12px; color:var(--cc-text-muted);" id="tableCount">Showing 0 employees</div>
         </div>
         <div class="loading" id="tableLoading">
             <div class="spinner"></div>
-            <p>Loading data...</p>
+            <p data-i18n="loading">Loading data...</p>
         </div>
         <div class="table-scroll">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 60px;">Sts</th>
-                        <th style="width: 80px;">ID</th>
-                        <th>Name</th>
-                        <th>Next Step / Follow Up</th>
-                        <th>Branch</th>
-                        <th style="width: 180px;">Expiry Alerts (Passport/Visa)</th>
-                        <th>Status</th>
-                        <th style="width: 120px;">Actions</th>
+                        <th style="width: 60px;" data-i18n="status">Sts</th>
+                        <th style="width: 80px;" data-i18n="id">ID</th>
+                        <th data-i18n="name">Name</th>
+                        <th data-i18n="nextStep">Next Step / Follow Up</th>
+                        <th data-i18n="branch">Branch</th>
+                        <th style="width: 180px;" data-i18n="expiryAlerts">Expiry Alerts (Passport/Visa)</th>
+                        <th data-i18n="status">Status</th>
+                        <th style="width: 120px;" data-i18n="actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="employeeTableBody">
@@ -300,39 +353,39 @@
     <div id="staffModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle" style="margin:0;">Staff Details</h3>
+                <h3 id="modalTitle" style="margin:0;" data-i18n="staffDetails">Staff Details</h3>
                 <button class="action-btn" onclick="closeModal('staffModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="staffForm" onsubmit="event.preventDefault(); saveStaff();">
+                <form id="staffForm">
                     <input type="hidden" id="editId">
                     
                     <div class="form-grid">
                         <!-- 1. BASIC INFO -->
-                        <div class="form-section-title" style="border-top:none; margin-top:0; color:var(--cc-black);">1. Basic Information</div>
+                        <div class="form-section-title" style="border-top:none; margin-top:0; color:var(--cc-black);" data-i18n="basicInfo">1. Basic Information</div>
                         
                         <div class="form-group">
-                            <label>Staff Type</label>
+                            <label data-i18n="staffType">Staff Type</label>
                             <select id="inpStaffType" onchange="toggleFieldsByType()">
-                                <option value="new">New Staff (Onboarding)</option>
-                                <option value="existing">Existing Staff</option>
+                                <option value="new" data-i18n="newStaffOption">New Staff (Onboarding)</option>
+                                <option value="existing" data-i18n="existingStaffOption">Existing Staff</option>
                             </select>
                         </div>
                         
                         <div class="form-group required">
-                            <label>Employee ID</label>
+                            <label data-i18n="employeeId">Employee ID</label>
                             <input type="text" id="inpId" required>
                         </div>
                         
                         <div class="form-group required">
-                            <label>Full Name</label>
+                            <label data-i18n="fullName">Full Name</label>
                             <input type="text" id="inpName" required>
                         </div>
                         
                         <div class="form-group">
-                            <label>Nationality</label>
+                            <label data-i18n="nationality">Nationality</label>
                             <select id="inpNationality">
-                                <option value="">Select...</option>
+                                <option value="" data-i18n="selectNationality">Select...</option>
                                 <option value="Egyptian">Egyptian</option>
                                 <option value="Bangladeshi">Bangladeshi</option>
                                 <option value="Ugandan">Ugandan</option>
@@ -346,14 +399,14 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>Designation</label>
+                            <label data-i18n="designation">Designation</label>
                             <input type="text" id="inpDesignation" placeholder="e.g., Restaurant Staff">
                         </div>
                         
                         <div class="form-group">
-                            <label>Branch</label>
+                            <label data-i18n="branch">Branch</label>
                             <select id="inpBranch">
-                                <option value="">Select Branch</option>
+                                <option value="" data-i18n="selectBranch">Select Branch</option>
                                 <option value="CC Hamdan St">CC Hamdan St</option>
                                 <option value="CC Khaldia">CC Khaldia</option>
                                 <option value="CC Muroor">CC Muroor</option>
@@ -369,69 +422,156 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>Hire Approval Date</label>
+                            <label data-i18n="hireApprovalDate">Hire Approval Date</label>
                             <input type="date" id="inpHireDate">
                         </div>
                         
                         <!-- New Staff Sections -->
                         <div id="newStaffSections">
                             <!-- 2. ENTRY & VISA -->
-                            <div class="form-section-title">2. Entry & Pre-Joining (UAE)</div>
-                            <div class="form-group"><label>Entry Permit Issued</label><input type="date" id="inpEntryIssued"></div>
-                            <div class="form-group"><label>Entry Permit Expiry</label><input type="date" id="inpEntryExp"></div>
-                            <div class="form-group"><label>Date of Entry</label><input type="date" id="inpDateEntry"></div>
-                            <div class="form-group"><label>Visit Visa Expiry</label><input type="date" id="inpVisitVisaExp"></div>
+                            <div class="form-section-title" data-i18n="entryVisa">2. Entry & Pre-Joining (UAE)</div>
+                            <div class="form-group"><label data-i18n="entryPermitIssued">Entry Permit Issued</label><input type="date" id="inpEntryIssued"></div>
+                            <div class="form-group"><label data-i18n="entryPermitConfirmed">Entry Permit Confirmed</label><input type="date" id="inpEntryConfirmed"></div>
+                            <div class="form-group"><label data-i18n="entryPermitExpiry">Entry Permit Expiry</label><input type="date" id="inpEntryExp"></div>
+                            <div class="form-group"><label data-i18n="dateOfEntry">Date of Entry</label><input type="date" id="inpDateEntry"></div>
+                            <div class="form-group"><label data-i18n="visitVisaExpiry">Visit Visa Expiry</label><input type="date" id="inpVisitVisaExp"></div>
+                            <div class="form-group"><label data-i18n="responsible">Responsible</label>
+                                <select id="inpEntryResponsible">
+                                    <option value="" data-i18n="selectResponsible">Select...</option>
+                                    <option value="HR">HR Department</option>
+                                    <option value="PRO">Public Relations Officer</option>
+                                    <option value="MR TAYSIR">MR TAYSIR</option>
+                                </select>
+                            </div>
 
                             <!-- 3. IMMIGRATION -->
-                            <div class="form-section-title">3. Immigration & Labour</div>
-                            <div class="form-group"><label>MOHRE Offer Issued</label><input type="date" id="inpMohreOffer"></div>
-                            <div class="form-group"><label>Offer Signed</label><input type="date" id="inpOfferSigned"></div>
-                            <div class="form-group"><label>Status Amdt Submitted</label><input type="date" id="inpStatusSub"></div>
-                            <div class="form-group"><label>Status Amdt Approved</label><input type="date" id="inpStatusApp"></div>
-                            <div class="form-group"><label>Cancellation Expiry</label><input type="date" id="inpCancelExp"></div>
+                            <div class="form-section-title" data-i18n="immigrationLabour">3. Immigration & Labour</div>
+                            <div class="form-group"><label data-i18n="mohreOfferIssued">MOHRE Offer Issued</label><input type="date" id="inpMohreOffer"></div>
+                            <div class="form-group"><label data-i18n="offerSigned">Offer Signed</label><input type="date" id="inpOfferSigned"></div>
+                            <div class="form-group"><label data-i18n="laborContractPrepared">Labor Contract Prepared</label><input type="date" id="inpLaborContract"></div>
+                            <div class="form-group"><label data-i18n="laborContractSigned">Labor Contract Signed</label><input type="date" id="inpLaborSigned"></div>
+                            <div class="form-group"><label data-i18n="statusAmdtSubmitted">Status Amdt Submitted</label><input type="date" id="inpStatusSub"></div>
+                            <div class="form-group"><label data-i18n="statusAmdtApproved">Status Amdt Approved</label><input type="date" id="inpStatusApp"></div>
+                            <div class="form-group"><label data-i18n="workPermitIssued">Work Permit Issued</label><input type="date" id="inpWorkPermit"></div>
+                            <div class="form-group"><label data-i18n="cancellationExpiry">Cancellation Expiry</label><input type="date" id="inpCancelExp"></div>
+                            <div class="form-group"><label data-i18n="responsible">Responsible</label>
+                                <select id="inpImmigrationResponsible">
+                                    <option value="" data-i18n="selectResponsible">Select...</option>
+                                    <option value="HR">HR Department</option>
+                                    <option value="PRO">Public Relations Officer</option>
+                                    <option value="MR TAYSIR">MR TAYSIR</option>
+                                </select>
+                            </div>
 
                             <!-- 4. MEDICAL & EID -->
-                            <div class="form-section-title">4. Medical & Emirates ID</div>
-                            <div class="form-group"><label>Medical Scheduled</label><input type="date" id="inpMedSch"></div>
-                            <div class="form-group"><label>Medical Completed</label><input type="date" id="inpMedComp"></div>
-                            <div class="form-group"><label>Medical Result Issued</label><input type="date" id="inpMedResult"></div>
-                            <div class="form-group"><label>EID Biometrics</label><input type="date" id="inpEidBio"></div>
-                            <div class="form-group"><label>EID Received</label><input type="date" id="inpEidRec"></div>
+                            <div class="form-section-title" data-i18n="medicalEid">4. Medical & Emirates ID</div>
+                            <div class="form-group"><label data-i18n="medicalScheduled">Medical Scheduled</label><input type="date" id="inpMedSch"></div>
+                            <div class="form-group"><label data-i18n="medicalCompleted">Medical Completed</label><input type="date" id="inpMedComp"></div>
+                            <div class="form-group"><label data-i18n="medicalResultIssued">Medical Result Issued</label><input type="date" id="inpMedResult"></div>
+                            <div class="form-group"><label data-i18n="healthCardIssued">Health Card Issued</label><input type="date" id="inpHealthCard"></div>
+                            <div class="form-group"><label data-i18n="medicalInsuranceRegistered">Medical Insurance Registered</label><input type="date" id="inpMedInsurance"></div>
+                            <div class="form-group"><label data-i18n="eidBiometrics">EID Biometrics</label><input type="date" id="inpEidBio"></div>
+                            <div class="form-group"><label data-i18n="eidCardPrinted">EID Card Printed</label><input type="date" id="inpEidCardPrinted"></div>
+                            <div class="form-group"><label data-i18n="eidReceived">EID Received</label><input type="date" id="inpEidRec"></div>
+                            <div class="form-group"><label data-i18n="responsible">Responsible</label>
+                                <select id="inpMedicalResponsible">
+                                    <option value="" data-i18n="selectResponsible">Select...</option>
+                                    <option value="HR">HR Department</option>
+                                    <option value="Admin">Admin Assistant</option>
+                                    <option value="MR TAYSIR">MR TAYSIR</option>
+                                </select>
+                            </div>
 
                             <!-- 5. RESIDENCY VISA -->
-                            <div class="form-section-title">5. Residency Visa</div>
-                            <div class="form-group"><label>Visa App Date</label><input type="date" id="inpVisaApp"></div>
-                            <div class="form-group"><label>Visa Issued Date</label><input type="date" id="inpVisaIssued"></div>
-                            <div class="form-group"><label>Visa Expiry</label><input type="date" id="inpVisaExp"></div>
+                            <div class="form-section-title" data-i18n="residencyVisa">5. Residency Visa</div>
+                            <div class="form-group"><label data-i18n="visaAppDate">Visa App Date</label><input type="date" id="inpVisaApp"></div>
+                            <div class="form-group"><label data-i18n="visaIssuedDate">Visa Issued Date</label><input type="date" id="inpVisaIssued"></div>
+                            <div class="form-group"><label data-i18n="visaStampedPassport">Visa Stamped in Passport</label><input type="date" id="inpVisaStamped"></div>
+                            <div class="form-group"><label data-i18n="visaExpiry">Visa Expiry</label><input type="date" id="inpVisaExp"></div>
+                            <div class="form-group"><label data-i18n="laborCardIssued">Labor Card Issued</label><input type="date" id="inpLaborCard"></div>
+                            <div class="form-group"><label data-i18n="federalAuthorityRegistration">Federal Authority Registration</label><input type="date" id="inpFedAuthReg"></div>
+                            <div class="form-group"><label data-i18n="responsible">Responsible</label>
+                                <select id="inpVisaResponsible">
+                                    <option value="" data-i18n="selectResponsible">Select...</option>
+                                    <option value="HR">HR Department</option>
+                                    <option value="PRO">Public Relations Officer</option>
+                                    <option value="MR TAYSIR">MR TAYSIR</option>
+                                </select>
+                            </div>
                             
                             <!-- 6. ONBOARDING -->
-                            <div class="form-section-title">6. Company On-Boarding</div>
-                            <div class="form-group"><label>IT Setup</label>
-                                <select id="inpItSetup"><option value="">Pending</option><option value="Done">Done</option></select>
+                            <div class="form-section-title" data-i18n="companyOnboarding">6. Company On-Boarding</div>
+                            <div class="form-group"><label data-i18n="bankAccountOpened">Bank Account Opened</label><input type="date" id="inpBankAccount"></div>
+                            <div class="form-group"><label data-i18n="accommodationArranged">Accommodation Arranged</label><input type="date" id="inpAccommodation"></div>
+                            <div class="form-group"><label data-i18n="uniformIssued">Uniform Issued</label><input type="date" id="inpUniform"></div>
+                            <div class="form-group"><label data-i18n="equipmentHandover">Equipment Handover</label><input type="date" id="inpEquipment"></div>
+                            <div class="form-group"><label data-i18n="itSetup">IT Setup</label>
+                                <select id="inpItSetup"><option value="" data-i18n="pending">Pending</option><option value="Done" data-i18n="done">Done</option></select>
                             </div>
-                            <div class="form-group"><label>Admin Setup</label>
-                                <select id="inpAdminSetup"><option value="">Pending</option><option value="Done">Done</option></select>
+                            <div class="form-group"><label data-i18n="adminSetup">Admin Setup</label>
+                                <select id="inpAdminSetup"><option value="" data-i18n="pending">Pending</option><option value="Done" data-i18n="done">Done</option></select>
                             </div>
-                            <div class="form-group"><label>Orientation</label>
-                                <select id="inpOrientation"><option value="">Pending</option><option value="Done">Done</option></select>
+                            <div class="form-group"><label data-i18n="orientation">Orientation</label>
+                                <select id="inpOrientation"><option value="" data-i18n="pending">Pending</option><option value="Done" data-i18n="done">Done</option></select>
                             </div>
-                            <div class="form-group"><label>Branch Start Date</label><input type="date" id="inpBranchStart"></div>
+                            <div class="form-group"><label data-i18n="branchStartDate">Branch Start Date</label><input type="date" id="inpBranchStart"></div>
+                            <div class="form-group"><label data-i18n="responsible">Responsible</label>
+                                <select id="inpOnboardingResponsible">
+                                    <option value="" data-i18n="selectResponsible">Select...</option>
+                                    <option value="HR">HR Department</option>
+                                    <option value="Admin">Admin Assistant</option>
+                                    <option value="IT">IT Department</option>
+                                    <option value="MR TAYSIR">MR TAYSIR</option>
+                                </select>
+                            </div>
+
+                            <!--7. NOTES & ATTACHMENTS -->
+                            <div class="form-section-title" data-i18n="notesAttachments">7. Notes & Attachments</div>
+                            <div class="form-group" style="grid-column: span 4;">
+                                <label data-i18n="notes">Notes</label>
+                                <textarea id="inpNotes" placeholder="Add any additional notes or comments..."></textarea>
+                            </div>
+                            <div class="form-group" style="grid-column: span 4;">
+                                <label data-i18n="documentUploads">Document Uploads</label>
+                                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--cc-text-muted); margin-bottom: 10px;"></i>
+                                    <p data-i18n="clickAddDocuments">Click to add documents</p>
+                                    <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)" multiple>
+                                </div>
+                                <div id="documentList" class="document-list"></div>
+                            </div>
                         </div>
 
                         <!-- Existing Staff Sections -->
                         <div id="existingStaffSections" style="display: none;">
-                            <!-- 7. EXISTING STAFF MAINTENANCE -->
-                            <div class="form-section-title">7. Ongoing Maintenance</div>
-                            <div class="form-group"><label>Passport No</label><input type="text" id="inpPassportNo"></div>
-                            <div class="form-group"><label>Passport Expiry</label><input type="date" id="inpPassportExp"></div>
-                            <div class="form-group"><label>Medical Insurance Expiry</label><input type="date" id="inpMedExpMain"></div>
+                            <!-- 8. EXISTING STAFF MAINTENANCE -->
+                            <div class="form-section-title" data-i18n="ongoingMaintenance">8. Ongoing Maintenance</div>
+                            <div class="form-group"><label data-i18n="passportNo">Passport No</label><input type="text" id="inpPassportNo"></div>
+                            <div class="form-group"><label data-i18n="passportExpiry">Passport Expiry</label><input type="date" id="inpPassportExp"></div>
+                            <div class="form-group"><label data-i18n="medicalInsuranceExpiry">Medical Insurance Expiry</label><input type="date" id="inpMedExpMain"></div>
+                            <div class="form-group"><label data-i18n="visaExpiry">Visa Expiry</label><input type="date" id="inpVisaExpExisting"></div>
+                            <div class="form-group"><label data-i18n="laborCardExpiry">Labor Card Expiry</label><input type="date" id="inpLaborCardExp"></div>
+                            <div class="form-group"><label data-i18n="eidExpiry">EID Expiry</label><input type="date" id="inpEidExp"></div>
+                            <div class="form-group" style="grid-column: span 4;">
+                                <label data-i18n="notes">Notes</label>
+                                <textarea id="inpNotesExisting" placeholder="Add any additional notes or comments..."></textarea>
+                            </div>
+                            <div class="form-group" style="grid-column: span 4;">
+                                <label data-i18n="documentUploads">Document Uploads</label>
+                                <div class="upload-area" onclick="document.getElementById('fileInputExisting').click()">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--cc-text-muted); margin-bottom: 10px;"></i>
+                                    <p data-i18n="clickAddDocuments">Click to add documents</p>
+                                    <input type="file" id="fileInputExisting" style="display: none;" onchange="handleFileSelectExisting(event)" multiple>
+                                </div>
+                                <div id="documentListExisting" class="document-list"></div>
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-reset" style="background:#999;" onclick="closeModal('staffModal')">Cancel</button>
-                <button class="btn-add" onclick="saveStaff()"><i class="fas fa-save"></i> Save Record</button>
+                <button class="btn-reset" style="background:#999;" onclick="closeModal('staffModal')" data-i18n="cancel">Cancel</button>
+                <button class="btn-add" onclick="saveStaff()"><i class="fas fa-save"></i> <span data-i18n="saveRecord">Save Record</span></button>
             </div>
         </div>
     </div>
@@ -440,7 +580,7 @@
     <div id="notificationsModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h3 style="margin:0;">📢 Notifications & Alerts</h3>
+                <h3 style="margin:0;" data-i18n="notificationsAlerts">📢 Notifications & Alerts</h3>
                 <button class="action-btn" onclick="closeModal('notificationsModal')">&times;</button>
             </div>
             <div class="modal-body">
@@ -456,60 +596,397 @@
         <div class="report-header">
             <div class="report-logo">👨‍🍳</div>
             <div class="report-title">
-                <h2>EMPLOYEE COMPLIANCE FILE</h2>
-                <p>CRISPY CHICKEN HR DEPARTMENT</p>
-                <p style="font-size: 12px; margin-top: 2px;">Generated on: <span id="printDate"></span></p>
+                <h2 data-i18n="employeeComplianceFile">EMPLOYEE COMPLIANCE FILE</h2>
+                <p data-i18n="crispyChickenHrDepartment">CRISPY CHICKEN HR DEPARTMENT</p>
+                <p style="font-size: 12px; margin-top: 2px;" data-i18n="generatedOn">Generated on: <span id="printDate"></span></p>
             </div>
         </div>
 
         <div class="report-section">
-            <h3>1. Employee Details</h3>
+            <h3 data-i18n="employeeDetails">1. Employee Details</h3>
             <table class="report-table">
-                <tr><th>Name:</th><td id="prName"></td><th>ID:</th><td id="prId"></td></tr>
-                <tr><th>Designation:</th><td id="prDesignation"></td><th>Branch:</th><td id="prBranch"></td></tr>
-                <tr><th>Status:</th><td id="prStatus"></td><th>Current Stage:</th><td id="prStage"></td></tr>
+                <tr><th data-i18n="name">Name:</th><td id="prName"></td><th data-i18n="id">ID:</th><td id="prId"></td></tr>
+                <tr><th data-i18n="designation">Designation:</th><td id="prDesignation"></td><th data-i18n="branch">Branch:</th><td id="prBranch"></td></tr>
+                <tr><th data-i18n="status">Status:</th><td id="prStatus"></td><th data-i18n="currentStage">Current Stage:</th><td id="prStage"></td></tr>
             </table>
         </div>
 
         <div class="report-section">
-            <h3>2. Onboarding & Compliance Check</h3>
+            <h3 data-i18n="onboardingComplianceCheck">2. Onboarding & Compliance Check</h3>
             <table class="report-table">
-                <tr><th>Entry Permit</th><td id="prEntry"></td><th>Medical</th><td id="prMedical"></td></tr>
-                <tr><th>Emirates ID</th><td id="prEID"></td><th>Visa Stamping</th><td id="prVisa"></td></tr>
-                <tr><th>Passport Exp.</th><td id="prPassExp"></td><th>Visa Exp.</th><td id="prVisaExp"></td></tr>
+                <tr><th data-i18n="entryPermit">Entry Permit</th><td id="prEntry"></td><th data-i18n="medical">Medical</th><td id="prMedical"></td></tr>
+                <tr><th data-i18n="emiratesId">Emirates ID</th><td id="prEID"></td><th data-i18n="visaStamping">Visa Stamping</th><td id="prVisa"></td></tr>
+                <tr><th data-i18n="passportExpiry">Passport Exp.</th><td id="prPassExp"></td><th data-i18n="visaExpiry">Visa Exp.</th><td id="prVisaExp"></td></tr>
             </table>
         </div>
 
         <div class="report-section">
-            <h3>3. Actions Taken</h3>
+            <h3 data-i18n="onboardingTimeline">3. Onboarding Timeline</h3>
+            <table class="report-table" id="onboardingTimeline">
+                <tr>
+                    <th data-i18n="step">Step</th>
+                    <th data-i18n="plannedDate">Planned Date</th>
+                    <th data-i18n="completedDate">Completed Date</th>
+                    <th data-i18n="daysTaken">Days Taken</th>
+                    <th data-i18n="responsible">Responsible</th>
+                </tr>
+                <!-- Will be populated dynamically -->
+            </table>
+        </div>
+
+        <div class="report-section">
+            <h3 data-i18n="actionsTaken">4. Actions Taken</h3>
             <ul id="prActions" style="font-size:13px; line-height: 1.6;"></ul>
         </div>
 
         <div style="text-align:center;">
-            <div id="prStamp" class="status-stamp" style="display:none;">READY TO JOIN</div>
+            <div id="prStamp" class="status-stamp" style="display:none;" data-i18n="readyToJoin">READY TO JOIN</div>
         </div>
 
         <div class="signature-area">
-            <div class="sign-box">HR Manager Signature</div>
-            <div class="sign-box">Manager Signature</div>
+            <div class="sign-box" data-i18n="hrManagerSignature">HR Manager Signature</div>
+            <div class="sign-box" data-i18n="managerSignature">Manager Signature</div>
         </div>
     </div>
 
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="toast">
         <i class="fas fa-check-circle"></i>
-        <span>Saved Successfully</span>
+        <span data-i18n="savedSuccessfully">Saved Successfully</span>
     </div>
 
     <script>
+        // ====================== TRANSLATIONS ======================
+        const translations = {
+            en: {
+                appTitle: "CRISPY CHICKEN HR",
+                appSubtitle: "Compliance & Onboarding Tracker",
+                searchPlaceholder: "Search ID, Name...",
+                allStaff: "All Staff",
+                newStaff: "🔵 New Staff (Onboarding)",
+                existingStaff: "🟢 Existing Staff",
+                needsAttention: "🟠 Needs Attention",
+                exportBtn: "Excel",
+                addStaffBtn: "New Staff",
+                totalStaff: "Total Staff",
+                onboarding: "Onboarding",
+                activeHandedOver: "Active / Handed Over",
+                actionRequired: "Action Required",
+                employeeDirectory: "Employee Directory & Follow-ups",
+                loading: "Loading data...",
+                status: "Status",
+                id: "ID",
+                name: "Name",
+                nextStep: "Next Step / Follow Up",
+                branch: "Branch",
+                expiryAlerts: "Expiry Alerts (Passport/Visa)",
+                actions: "Actions",
+                staffDetails: "Staff Details",
+                basicInfo: "1. Basic Information",
+                staffType: "Staff Type",
+                newStaffOption: "New Staff (Onboarding)",
+                existingStaffOption: "Existing Staff",
+                employeeId: "Employee ID",
+                fullName: "Full Name",
+                nationality: "Nationality",
+                selectNationality: "Select...",
+                designation: "Designation",
+                selectBranch: "Select Branch",
+                hireApprovalDate: "Hire Approval Date",
+                entryVisa: "2. Entry & Pre-Joining (UAE)",
+                entryPermitIssued: "Entry Permit Issued",
+                entryPermitConfirmed: "Entry Permit Confirmed",
+                entryPermitExpiry: "Entry Permit Expiry",
+                dateOfEntry: "Date of Entry",
+                visitVisaExpiry: "Visit Visa Expiry",
+                responsible: "Responsible",
+                selectResponsible: "Select...",
+                immigrationLabour: "3. Immigration & Labour",
+                mohreOfferIssued: "MOHRE Offer Issued",
+                offerSigned: "Offer Signed",
+                laborContractPrepared: "Labor Contract Prepared",
+                laborContractSigned: "Labor Contract Signed",
+                statusAmdtSubmitted: "Status Amdt Submitted",
+                statusAmdtApproved: "Status Amdt Approved",
+                workPermitIssued: "Work Permit Issued",
+                cancellationExpiry: "Cancellation Expiry",
+                medicalEid: "4. Medical & Emirates ID",
+                medicalScheduled: "Medical Scheduled",
+                medicalCompleted: "Medical Completed",
+                medicalResultIssued: "Medical Result Issued",
+                healthCardIssued: "Health Card Issued",
+                medicalInsuranceRegistered: "Medical Insurance Registered",
+                eidBiometrics: "EID Biometrics",
+                eidCardPrinted: "EID Card Printed",
+                eidReceived: "EID Received",
+                residencyVisa: "5. Residency Visa",
+                visaAppDate: "Visa App Date",
+                visaIssuedDate: "Visa Issued Date",
+                visaStampedPassport: "Visa Stamped in Passport",
+                visaExpiry: "Visa Expiry",
+                laborCardIssued: "Labor Card Issued",
+                federalAuthorityRegistration: "Federal Authority Registration",
+                companyOnboarding: "6. Company On-Boarding",
+                bankAccountOpened: "Bank Account Opened",
+                accommodationArranged: "Accommodation Arranged",
+                uniformIssued: "Uniform Issued",
+                equipmentHandover: "Equipment Handover",
+                itSetup: "IT Setup",
+                adminSetup: "Admin Setup",
+                orientation: "Orientation",
+                branchStartDate: "Branch Start Date",
+                notesAttachments: "7. Notes & Attachments",
+                notes: "Notes",
+                documentUploads: "Document Uploads",
+                clickAddDocuments: "Click to add documents",
+                ongoingMaintenance: "8. Ongoing Maintenance",
+                passportNo: "Passport No",
+                passportExpiry: "Passport Expiry",
+                medicalInsuranceExpiry: "Medical Insurance Expiry",
+                laborCardExpiry: "Labor Card Expiry",
+                eidExpiry: "EID Expiry",
+                cancel: "Cancel",
+                saveRecord: "Save Record",
+                notificationsAlerts: "📢 Notifications & Alerts",
+                employeeComplianceFile: "EMPLOYEE COMPLIANCE FILE",
+                crispyChickenHrDepartment: "CRISPY CHICKEN HR DEPARTMENT",
+                generatedOn: "Generated on:",
+                employeeDetails: "1. Employee Details",
+                onboardingComplianceCheck: "2. Onboarding & Compliance Check",
+                entryPermit: "Entry Permit",
+                medical: "Medical",
+                emiratesId: "Emirates ID",
+                visaStamping: "Visa Stamping",
+                onboardingTimeline: "3. Onboarding Timeline",
+                step: "Step",
+                plannedDate: "Planned Date",
+                completedDate: "Completed Date",
+                daysTaken: "Days Taken",
+                actionsTaken: "4. Actions Taken",
+                readyToJoin: "READY TO JOIN",
+                hrManagerSignature: "HR Manager Signature",
+                managerSignature: "Manager Signature",
+                savedSuccessfully: "Saved Successfully",
+                employeeAddedSuccessfully: "Employee added successfully",
+                employeeUpdatedSuccessfully: "Employee updated successfully",
+                employeeDeletedSuccessfully: "Employee deleted successfully",
+                employeeNotFound: "Employee not found",
+                employeeIdRequired: "Employee ID is required",
+                employeeNameRequired: "Employee name is required",
+                employeeIdAlreadyExists: "Employee ID \"{id}\" already exists",
+                noEmployeesFound: "No employees found",
+                addFirstEmployee: "Add your first employee using the \"New Staff\" button",
+                showingEmployees: "Showing {count} of {total} employees",
+                noDataToExport: "No data to export",
+                dataExportedSuccessfully: "Data exported successfully",
+                viewingDocument: "Viewing document: {name}",
+                noDocumentsUploaded: "No documents uploaded",
+                noAlerts: "No alerts",
+                allEmployeesUpToDate: "All employees are up to date",
+                clickArrowToView: "Click arrow to view",
+                documentsExpired: "Documents Expired",
+                documentsExpiringIn: "{item} expiring in {days} days",
+                entryPermitConfirmationOverdue: "Entry Permit confirmation overdue ({days} days)",
+                areYouSureDelete: "Are you sure you want to delete employee {id}? This action cannot be undone.",
+                errorOccurred: "An error occurred while saving. Please try again.",
+                pending: "Pending",
+                done: "Done",
+                new: "NEW",
+                existing: "EXS",
+                ready: "✅ Ready",
+                inProcess: "⚙️ In Process",
+                expired: "🔴 Expired",
+                expiringSoon: "🟠 Expiring Soon",
+                active: "✅ Active",
+                routineMonitoring: "Routine Monitoring",
+                approveHireDate: "Approve Hire Date",
+                issueEntryPermit: "Issue Entry Permit",
+                confirmEntryPermitReceived: "Confirm Entry Permit Received",
+                recordEntryDate: "Record Entry Date",
+                prepareSignLaborContract: "Prepare & Sign Labor Contract",
+                scheduleMedicalGetResult: "Schedule Medical / Get Result",
+                activateMedicalInsurance: "Activate Medical Insurance",
+                waitForEidDelivery: "Wait for EID Delivery",
+                issueVisa: "Issue Visa",
+                stampVisaInPassport: "Stamp Visa in Passport",
+                openBankAccount: "Open Bank Account",
+                sendToRestaurantHandover: "Send to Restaurant (Handover)",
+                readyForHandover: "Ready for Handover"
+            },
+            ar: {
+                appTitle: "موارد بشرية كريسبي تشيكن",
+                appSubtitle: "نظام الامتثال والتوظيف",
+                searchPlaceholder: "البحث بالرقم، الاسم...",
+                allStaff: "جميع الموظفين",
+                newStaff: "🔵 موظفون جدد (قيد التوظيف)",
+                existingStaff: "🟢 موظفون حاليون",
+                needsAttention: "🟠 يحتاج متابعة",
+                exportBtn: "إكسل",
+                addStaffBtn: "موظف جديد",
+                totalStaff: "إجمالي الموظفين",
+                onboarding: "قيد التوظيف",
+                activeHandedOver: "نشط / تم التسليم",
+                actionRequired: "مطلوب إجراء",
+                employeeDirectory: "دليل الموظفين والمتابعات",
+                loading: "جاري تحميل البيانات...",
+                status: "الحالة",
+                id: "الرقم",
+                name: "الاسم",
+                nextStep: "الخطوة التالية / المتابعة",
+                branch: "الفرع",
+                expiryAlerts: "تنبيهات انتهاء الصلاحية (جواز/تأشيرة)",
+                actions: "الإجراءات",
+                staffDetails: "تفاصيل الموظف",
+                basicInfo: "1. المعلومات الأساسية",
+                staffType: "نوع الموظف",
+                newStaffOption: "موظف جديد (قيد التوظيف)",
+                existingStaffOption: "موظف حالي",
+                employeeId: "رقم الموظف",
+                fullName: "الاسم الكامل",
+                nationality: "الجنسية",
+                selectNationality: "اختر...",
+                designation: "المنصب",
+                selectBranch: "اختر الفرع",
+                hireApprovalDate: "تاريخ موافقة التوظيف",
+                entryVisa: "2. الدخول وما قبل الانضمام (الإمارات)",
+                entryPermitIssued: "إصدار تصريح الدخول",
+                entryPermitConfirmed: "تأكيد استلام تصريح الدخول",
+                entryPermitExpiry: "انتهاء صلاحية تصريح الدخول",
+                dateOfEntry: "تاريخ الدخول",
+                visitVisaExpiry: "انتهاء صلاحية تأشيرة الزيارة",
+                responsible: "المسؤول",
+                selectResponsible: "اختر...",
+                immigrationLabour: "3. الهجرة والعمل",
+                mohreOfferIssued: "إصدار عرض وزارة الموارد البشرية",
+                offerSigned: "توقيع العرض",
+                laborContractPrepared: "إعداد عقد العمل",
+                laborContractSigned: "توقيع عقد العمل",
+                statusAmdtSubmitted: "تقديم تعديل الحالة",
+                statusAmdtApproved: "موافقة تعديل الحالة",
+                workPermitIssued: "إصدار تصريح العمل",
+                cancellationExpiry: "انتهاء صلاحية الإلغاء",
+                medicalEid: "4. الفحص الطبي والهوية الإماراتية",
+                medicalScheduled: "مواعيد الفحص الطبي",
+                medicalCompleted: "إتمام الفحص الطبي",
+                medicalResultIssued: "إصدار نتيجة الفحص الطبي",
+                healthCardIssued: "إصدار البطاقة الصحية",
+                medicalInsuranceRegistered: "تسجيل التأمين الصحي",
+                eidBiometrics: "البصميات للهوية الإماراتية",
+                eidCardPrinted: "طباعة بطاقة الهوية",
+                eidReceived: "استلام بطاقة الهوية",
+                residencyVisa: "5. تأشيرة الإقامة",
+                visaAppDate: "تاريخ تقديم التأشيرة",
+                visaIssuedDate: "تاريخ إصدار التأشيرة",
+                visaStampedPassport: "ختم التأشيرة في جواز السفر",
+                visaExpiry: "انتهاء صلاحية التأشيرة",
+                laborCardIssued: "إصدار بطاقة العمل",
+                federalAuthorityRegistration: "التسجيل في الهيئة الاتحادية",
+                companyOnboarding: "6. انضمام الشركة",
+                bankAccountOpened: "فتح حساب بنكي",
+                accommodationArranged: "ترتيبات السكن",
+                uniformIssued: "تسليم الزي الرسمي",
+                equipmentHandover: "تسليم المعدات",
+                itSetup: "إعداد تقنية المعلومات",
+                adminSetup: "إعداد الإدارة",
+                orientation: "التوجيه",
+                branchStartDate: "تاريخ البدء في الفرع",
+                notesAttachments: "7. ملاحظات ومرفقات",
+                notes: "ملاحظات",
+                documentUploads: "تحميل المستندات",
+                clickAddDocuments: "انقر لإضافة مستندات",
+                ongoingMaintenance: "8. الصيانة المستمرة",
+                passportNo: "رقم جواز السفر",
+                passportExpiry: "انتهاء صلاحية جواز السفر",
+                medicalInsuranceExpiry: "انتهاء صلاحية التأمين الصحي",
+                laborCardExpiry: "انتهاء صلاحية بطاقة العمل",
+                eidExpiry: "انتهاء صلاحية الهوية",
+                cancel: "إلغاء",
+                saveRecord: "حفظ السجل",
+                notificationsAlerts: "📢 الإشعارات والتنبيهات",
+                employeeComplianceFile: "ملف امتثال الموظف",
+                crispyChickenHrDepartment: "قسم الموارد البشرية - كريسبي تشيكن",
+                generatedOn: "تم الإنشاء في:",
+                employeeDetails: "1. تفاصيل الموظف",
+                onboardingComplianceCheck: "2. فحص الانضمام والامتثال",
+                entryPermit: "تصريح الدخول",
+                medical: "الفحص الطبي",
+                emiratesId: "الهوية الإماراتية",
+                visaStamping: "ختم التأشيرة",
+                onboardingTimeline: "3. الجدول الزمني للانضمام",
+                step: "الخطوة",
+                plannedDate: "التاريخ المخطط",
+                completedDate: "تاريخ الإنجاز",
+                daysTaken: "الأيام المستغرقة",
+                actionsTaken: "4. الإجراءات المتخذة",
+                readyToJoin: "جاهز للانضمام",
+                hrManagerSignature: "توقيع مدير الموارد البشرية",
+                managerSignature: "توقيع المدير",
+                savedSuccessfully: "تم الحفظ بنجاح",
+                employeeAddedSuccessfully: "تم إضافة الموظف بنجاح",
+                employeeUpdatedSuccessfully: "تم تحديث الموظف بنجاح",
+                employeeDeletedSuccessfully: "تم حذف الموظف بنجاح",
+                employeeNotFound: "الموظف غير موجود",
+                employeeIdRequired: "رقم الموظف مطلوب",
+                employeeNameRequired: "اسم الموظف مطلوب",
+                employeeIdAlreadyExists: "رقم الموظف \"{id}\" موجود بالفعل",
+                noEmployeesFound: "لم يتم العثور على موظفين",
+                addFirstEmployee: "أضف أول موظف باستخدام زر \"موظف جديد\"",
+                showingEmployees: "عرض {count} من {total} موظف",
+                noDataToExport: "لا توجد بيانات للتصدير",
+                dataExportedSuccessfully: "تم تصدير البيانات بنجاح",
+                viewingDocument: "عرض المستند: {name}",
+                noDocumentsUploaded: "لم يتم تحميل مستندات",
+                noAlerts: "لا توجد تنبيهات",
+                allEmployeesUpToDate: "جميع الموظفين محدثون",
+                clickArrowToView: "انقر على السهم للعرض",
+                documentsExpired: "المستندات منتهية",
+                documentsExpiringIn: "{item} تنتهي صلاحيته خلال {days} أيام",
+                entryPermitConfirmationOverdue: "تأكيد تصريح الدخول متأخر ({days} يوم)",
+                areYouSureDelete: "هل أنت متأكد من حذف الموظف {id}؟ لا يمكن التراجع عن هذا الإجراء.",
+                errorOccurred: "حدث خطأ أثناء الحفظ. يرجى المحاولة مرة أخرى.",
+                pending: "معلق",
+                done: "تم",
+                new: "جديد",
+                existing: "حالي",
+                ready: "✅ جاهز",
+                inProcess: "⚙️ قيد التنفيذ",
+                expired: "🔴 منتهي",
+                expiringSoon: "🟠 ينتهي قريباً",
+                active: "✅ نشط",
+                routineMonitoring: "المراقبة الروتينية",
+                approveHireDate: "موافقة على تاريخ التوظيف",
+                issueEntryPermit: "إصدار تصريح الدخول",
+                confirmEntryPermitReceived: "تأكيد استلام تصريح الدخول",
+                recordEntryDate: "تسجيل تاريخ الدخول",
+                prepareSignLaborContract: "إعداد وتوقيع عقد العمل",
+                scheduleMedicalGetResult: "تحديد موعد الفحص الطبي / الحصول على النتيجة",
+                activateMedicalInsurance: "تفعيل التأمين الصحي",
+                waitForEidDelivery: "في انتظار تسليم الهوية",
+                issueVisa: "إصدار التأشيرة",
+                stampVisaInPassport: "ختم التأشيرة في جواز السفر",
+                openBankAccount: "فتح حساب بنكي",
+                sendToRestaurantHandover: "إرسال إلى المطعم (التسليم)",
+                readyForHandover: "جاهز للتسليم"
+            }
+        };
+
+        let currentLang = localStorage.getItem('cc_hr_lang') || 'en';
+
         // ====================== CONFIGURATION ======================
-        const STORAGE_KEY = 'crispy_chicken_hr_system_v1.0';
+        const STORAGE_KEY = 'crispy_chicken_hr_system_v2.2';
         let employees = [];
         let filteredEmployees = [];
+        let documents = []; // Store uploaded documents
+        let documentsExisting = []; // Store existing staff documents
 
         // ====================== INITIALIZATION ======================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Crispy Chicken HR System Initializing...');
+            
+            // Load language preference
+            const savedLang = localStorage.getItem('cc_hr_lang') || 'en';
+            currentLang = savedLang;
+            updateLanguage();
             
             // Load theme preference
             const savedTheme = localStorage.getItem('cc_hr_theme') || 'light';
@@ -530,6 +1007,66 @@
             
             console.log('✅ System initialized successfully');
         });
+
+        // ====================== LANGUAGE FUNCTIONS ======================
+        function updateLanguage() {
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = translations[currentLang][key] || translations['en'][key];
+                
+                if (element.tagName === 'INPUT' && element.type === 'text') {
+                    element.placeholder = translation;
+                } else if (element.tagName === 'OPTION') {
+                    element.textContent = translation;
+                } else {
+                    element.textContent = translation;
+                }
+            });
+            
+            // Update language toggle button
+            document.getElementById('langText').textContent = currentLang === 'ar' ? 'English' : 'العربية';
+            
+            // Update select options
+            updateSelectOptions();
+            
+            // Update UI
+            updateUI();
+        }
+
+        function updateSelectOptions() {
+            // Update filter select
+            const typeFilter = document.getElementById('typeFilter');
+            if (typeFilter) {
+                const options = typeFilter.querySelectorAll('option');
+                options.forEach(option => {
+                    const key = option.getAttribute('data-i18n');
+                    if (key) {
+                        option.textContent = translations[currentLang][key] || translations['en'][key];
+                    }
+                });
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('cc_hr_lang', currentLang);
+            updateLanguage();
+        }
+
+        function t(key, params = {}) {
+            let translation = translations[currentLang][key] || translations['en'][key];
+            
+            // Replace parameters
+            Object.keys(params).forEach(param => {
+                translation = translation.replace(`{${param}}`, params[param]);
+            });
+            
+            return translation;
+        }
 
         // ====================== DATA MANAGEMENT ======================
         function loadData() {
@@ -569,7 +1106,8 @@
                     passportExp: "2025-06-30",
                     visaExp: "2024-12-31",
                     medExpMain: "2024-12-31",
-                    lastUpdated: new Date().toISOString()
+                    lastUpdated: new Date().toISOString(),
+                    documents: []
                 },
                 {
                     id: "CC002",
@@ -580,12 +1118,26 @@
                     branch: "CC Khaldia",
                     hireDate: "2024-02-01",
                     entryIssued: "2024-02-05",
+                    entryConfirmed: "2024-02-07",
                     dateEntry: "2024-02-10",
                     mohreOffer: "2024-02-15",
+                    laborContract: "2024-02-17",
+                    laborSigned: "2024-02-18",
                     medResult: "2024-02-20",
+                    medInsurance: "2024-02-22",
+                    eidBio: "2024-02-24",
+                    eidRec: "2024-03-01",
+                    visaIssued: "2024-03-05",
+                    visaStamped: "2024-03-07",
+                    bankAccount: "2024-03-10",
                     itSetup: "Done",
                     adminSetup: "Done",
-                    lastUpdated: new Date().toISOString()
+                    orientation: "Done",
+                    lastUpdated: new Date().toISOString(),
+                    documents: [
+                        { id: 1, name: "Passport Copy", date: "2024-02-01", type: "passport" },
+                        { id: 2, name: "Medical Report", date: "2024-02-20", type: "medical" }
+                    ]
                 },
                 {
                     id: "CC003",
@@ -598,7 +1150,8 @@
                     passportExp: "2024-03-01", // Expiring soon
                     visaExp: "2024-06-15",
                     medExpMain: "2024-05-20",
-                    lastUpdated: new Date().toISOString()
+                    lastUpdated: new Date().toISOString(),
+                    documents: []
                 }
             ];
         }
@@ -622,36 +1175,41 @@
             const diffTime = target - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            if (diffDays <= 0) return { label: 'EXPIRED', class: 'date-expired', warning: false, urgent: true, daysLeft: 0 };
-            if (diffDays <= 15) return { label: `${diffDays} Days Left`, class: 'date-warning', warning: true, urgent: false, daysLeft: diffDays };
+            if (diffDays <= 0) return { label: t('expired'), class: 'date-expired', warning: false, urgent: true, daysLeft: 0 };
+            if (diffDays <= 15) return { label: t('documentsExpiringIn', { days: diffDays }), class: 'date-warning', warning: true, urgent: false, daysLeft: diffDays };
             return { label: `${diffDays} Days`, class: '', warning: false, urgent: false, daysLeft: diffDays };
         }
 
         function getNextStep(emp) {
             if (emp.staffType !== 'new') return null;
 
-            if (!emp.hireDate) return "Approve Hire Date";
-            if (!emp.entryIssued) return "Issue Entry Permit";
-            if (!emp.dateEntry) return "Record Entry Date";
-            if (!emp.medResult) return "Schedule Medical / Get Result";
-            if (!emp.eidRec) return "Wait for EID Delivery";
-            if (!emp.visaIssued) return "Stamping Visa";
-            if (!emp.branchStartDate) return "Send to Restaurant (Handover)";
+            if (!emp.hireDate) return { step: t('approveHireDate'), priority: "high" };
+            if (!emp.entryIssued) return { step: t('issueEntryPermit'), priority: "high" };
+            if (!emp.entryConfirmed) return { step: t('confirmEntryPermitReceived'), priority: "high" };
+            if (!emp.dateEntry) return { step: t('recordEntryDate'), priority: "high" };
+            if (!emp.laborContract) return { step: t('prepareSignLaborContract'), priority: "high" };
+            if (!emp.medResult) return { step: t('scheduleMedicalGetResult'), priority: "medium" };
+            if (!emp.medInsurance) return { step: t('activateMedicalInsurance'), priority: "high" };
+            if (!emp.eidRec) return { step: t('waitForEidDelivery'), priority: "medium" };
+            if (!emp.visaIssued) return { step: t('issueVisa'), priority: "high" };
+            if (!emp.visaStamped) return { step: t('stampVisaInPassport'), priority: "high" };
+            if (!emp.bankAccount) return { step: t('openBankAccount'), priority: "medium" };
+            if (!emp.branchStartDate) return { step: t('sendToRestaurantHandover'), priority: "high" };
             
-            return "Ready for Handover";
+            return { step: t('readyForHandover'), priority: "completed" };
         }
 
         function getOverallStatus(emp) {
             if (emp.staffType === 'new') {
                 const step = getNextStep(emp);
-                if (step === "Ready for Handover") return { 
-                    label: "✅ Ready", 
+                if (step.step === t('readyForHandover')) return { 
+                    label: t('ready'), 
                     class: "status-ok", 
                     color: "#10b981",
                     category: "ready"
                 };
                 return { 
-                    label: "⚙️ In Process", 
+                    label: t('inProcess'), 
                     class: "status-process", 
                     color: "#3b82f6",
                     category: "process"
@@ -659,27 +1217,44 @@
             }
 
             const pass = getExpiryStatus(emp.passportExp);
-            const visa = getExpiryStatus(emp.visaExp);
+            const visa = getExpiryStatus(emp.visaExp || emp.visaExpExisting);
             const med = getExpiryStatus(emp.medExpMain);
 
             if (pass.urgent || visa.urgent || med.urgent) return { 
-                label: "🔴 Expired", 
+                label: t('expired'), 
                 class: "status-expired", 
                 color: "#dc3545",
                 category: "expired"
             };
             if (pass.warning || visa.warning || med.warning) return { 
-                label: "🟠 Expiring Soon", 
+                label: t('expiringSoon'), 
                 class: "status-warning", 
                 color: "#f59e0b",
                 category: "warning"
             };
             return { 
-                label: "✅ Active", 
+                label: t('active'), 
                 class: "status-ok", 
                 color: "#10b981",
                 category: "active"
             };
+        }
+
+        function getStepResponsible(step) {
+            const responsibilities = {
+                [t('issueEntryPermit')]: "PRO Department",
+                [t('confirmEntryPermitReceived')]: "PRO Department",
+                [t('prepareSignLaborContract')]: "HR Department",
+                [t('scheduleMedicalGetResult')]: "HR Assistant",
+                [t('activateMedicalInsurance')]: "HR Department",
+                [t('waitForEidDelivery')]: "PRO Department",
+                [t('issueVisa')]: "PRO Department",
+                [t('stampVisaInPassport')]: "PRO Department",
+                [t('openBankAccount')]: "HR Assistant",
+                [t('sendToRestaurantHandover')]: "Branch Manager"
+            };
+            
+            return responsibilities[step] || "HR Department";
         }
 
         // ====================== UI RENDERING ======================
@@ -706,13 +1281,13 @@
                             <td colspan="8">
                                 <div class="empty-state">
                                     <i class="fas fa-users"></i>
-                                    <h3>No employees found</h3>
-                                    <p>Add your first employee using the "Add Staff" button</p>
+                                    <h3>${t('noEmployeesFound')}</h3>
+                                    <p>${t('addFirstEmployee')}</p>
                                 </div>
                             </td>
                         </tr>
                     `;
-                    tableCount.textContent = `Showing 0 employees`;
+                    tableCount.textContent = t('showingEmployees', { count: 0, total: employees.length });
                     return;
                 }
                 
@@ -744,7 +1319,7 @@
                     let expiryHTML = `<span style="color:#aaa;">-</span>`;
                     if (emp.staffType === 'existing') {
                         const pass = getExpiryStatus(emp.passportExp);
-                        const visa = getExpiryStatus(emp.visaExp);
+                        const visa = getExpiryStatus(emp.visaExp || emp.visaExpExisting);
                         expiryHTML = `
                             <div><small>Pass:</small> <span class="${pass.class}">${pass.label}</span></div>
                             <div style="margin-top:2px;"><small>Visa:</small> <span class="${visa.class}">${visa.label}</span></div>
@@ -752,11 +1327,11 @@
                     }
 
                     const stepHTML = emp.staffType === 'new' 
-                        ? `<span class="next-step-badge" title="${nextStep}">${nextStep}</span>` 
-                        : `<span class="next-step-badge" style="border-left-color:#ccc">Routine Monitoring</span>`;
+                        ? `<span class="next-step-badge" title="${nextStep.step}">${nextStep.step}</span>` 
+                        : `<span class="next-step-badge" style="border-left-color:#ccc">${t('routineMonitoring')}</span>`;
 
                     tr.innerHTML = `
-                        <td><span class="badge ${status.class}">${emp.staffType === 'new' ? 'NEW' : 'EXS'}</span></td>
+                        <td><span class="badge ${status.class}">${emp.staffType === 'new' ? t('new') : t('existing')}</span></td>
                         <td><strong>${emp.id}</strong></td>
                         <td>
                             <div style="font-weight: 600;">${emp.name}</div>
@@ -767,9 +1342,9 @@
                         <td>${expiryHTML}</td>
                         <td><span style="font-weight:bold; color:${status.color}">${status.label}</span></td>
                         <td>
-                            <button class="action-btn btn-edit" onclick="editEmployee('${emp.id}')" title="Edit"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-print" onclick="printReport('${emp.id}')" title="Print Report"><i class="fas fa-print"></i></button>
-                            <button class="action-btn btn-del" onclick="deleteEmployee('${emp.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn btn-edit" onclick="editEmployee('${emp.id}')" title="${t('edit')}"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn btn-print" onclick="printReport('${emp.id}')" title="${t('print')}"><i class="fas fa-print"></i></button>
+                            <button class="action-btn btn-del" onclick="deleteEmployee('${emp.id}')" title="${t('delete')}"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -780,7 +1355,7 @@
                 document.getElementById('newCount').innerText = countNew;
                 document.getElementById('activeCount').innerText = countActive;
                 document.getElementById('alertCount').innerText = countAlert;
-                tableCount.textContent = `Showing ${filteredEmployees.length} of ${employees.length} employees`;
+                tableCount.textContent = t('showingEmployees', { count: filteredEmployees.length, total: employees.length });
 
                 // Update notification badge
                 const badge = document.getElementById('notifCount');
@@ -832,8 +1407,14 @@
             document.getElementById('staffForm').reset();
             document.getElementById('editId').value = "";
             
+            // Reset document list
+            documents = [];
+            documentsExisting = [];
+            updateDocumentList();
+            updateDocumentListExisting();
+            
             // Set modal title
-            document.getElementById('modalTitle').innerText = "Add New Staff";
+            document.getElementById('modalTitle').innerText = t('staffDetails');
             
             // Set default values
             document.getElementById('inpStaffType').value = "new";
@@ -865,7 +1446,7 @@
             console.log(`✏️ Editing employee: ${id}`);
             const emp = employees.find(e => e.id === id);
             if (!emp) {
-                showToast('Employee not found', 'error');
+                showToast(t('employeeNotFound'), 'error');
                 return;
             }
             
@@ -879,29 +1460,48 @@
                 'inpBranch': 'branch',
                 'inpHireDate': 'hireDate',
                 'inpEntryIssued': 'entryIssued',
+                'inpEntryConfirmed': 'entryConfirmed',
                 'inpEntryExp': 'entryExp',
                 'inpDateEntry': 'dateEntry',
                 'inpVisitVisaExp': 'visitVisaExp',
                 'inpMohreOffer': 'mohreOffer',
                 'inpOfferSigned': 'offerSigned',
+                'inpLaborContract': 'laborContract',
+                'inpLaborSigned': 'laborSigned',
                 'inpStatusSub': 'statusSub',
                 'inpStatusApp': 'statusApp',
+                'inpWorkPermit': 'workPermit',
                 'inpCancelExp': 'cancelExp',
                 'inpMedSch': 'medSch',
                 'inpMedComp': 'medComp',
                 'inpMedResult': 'medResult',
+                'inpHealthCard': 'healthCard',
+                'inpMedInsurance': 'medInsurance',
                 'inpEidBio': 'eidBio',
+                'inpEidCardPrinted': 'eidCardPrinted',
                 'inpEidRec': 'eidRec',
                 'inpVisaApp': 'visaApp',
                 'inpVisaIssued': 'visaIssued',
+                'inpVisaStamped': 'visaStamped',
                 'inpVisaExp': 'visaExp',
+                'inpLaborCard': 'laborCard',
+                'inpFedAuthReg': 'fedAuthReg',
+                'inpBankAccount': 'bankAccount',
+                'inpAccommodation': 'accommodation',
+                'inpUniform': 'uniform',
+                'inpEquipment': 'equipment',
                 'inpItSetup': 'itSetup',
                 'inpAdminSetup': 'adminSetup',
                 'inpOrientation': 'orientation',
                 'inpBranchStart': 'branchStartDate',
+                'inpNotes': 'notes',
                 'inpPassportNo': 'passportNo',
                 'inpPassportExp': 'passportExp',
-                'inpMedExpMain': 'medExpMain'
+                'inpMedExpMain': 'medExpMain',
+                'inpVisaExpExisting': 'visaExpExisting',
+                'inpLaborCardExp': 'laborCardExp',
+                'inpEidExp': 'eidExp',
+                'inpNotesExisting': 'notes'
             };
 
             for (const [inputId, field] of Object.entries(fieldMap)) {
@@ -911,8 +1511,14 @@
                 }
             }
             
+            // Load documents if they exist
+            documents = emp.documents || [];
+            documentsExisting = emp.documents || [];
+            updateDocumentList();
+            updateDocumentListExisting();
+            
             document.getElementById('editId').value = emp.id;
-            document.getElementById('modalTitle').innerText = `Edit Staff: ${emp.name}`;
+            document.getElementById('modalTitle').innerText = `${t('editStaff')}: ${emp.name}`;
             toggleFieldsByType();
             openModal('staffModal');
         }
@@ -931,108 +1537,273 @@
             }
         }
 
+        // ====================== DOCUMENT MANAGEMENT ======================
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            for (let file of files) {
+                const document = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    date: new Date().toISOString().split('T')[0],
+                    size: file.size,
+                    type: file.type
+                };
+                documents.push(document);
+            }
+            updateDocumentList();
+            event.target.value = ''; // Reset input
+        }
+
+        function handleFileSelectExisting(event) {
+            const files = event.target.files;
+            for (let file of files) {
+                const document = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    date: new Date().toISOString().split('T')[0],
+                    size: file.size,
+                    type: file.type
+                };
+                documentsExisting.push(document);
+            }
+            updateDocumentListExisting();
+            event.target.value = ''; // Reset input
+        }
+
+        function removeDocument(id) {
+            documents = documents.filter(doc => doc.id !== id);
+            updateDocumentList();
+        }
+
+        function removeDocumentExisting(id) {
+            documentsExisting = documentsExisting.filter(doc => doc.id !== id);
+            updateDocumentListExisting();
+        }
+
+        function updateDocumentList() {
+            const listElement = document.getElementById('documentList');
+            
+            if (documents.length === 0) {
+                listElement.innerHTML = `<p style="color: var(--cc-text-muted); font-size: 12px; margin-top: 5px;">${t('noDocumentsUploaded')}</p>`;
+                return;
+            }
+            
+            let html = '';
+            documents.forEach(doc => {
+                const fileSize = doc.size ? `(${(doc.size / 1024).toFixed(1)} KB)` : '';
+                html += `
+                    <div class="document-item">
+                        <div class="document-name">
+                            <i class="fas fa-file-alt"></i>
+                            <span>${doc.name}</span>
+                            <small>${fileSize}</small>
+                        </div>
+                        <div class="document-date">${formatDate(doc.date)}</div>
+                        <div class="document-actions">
+                            <button class="action-btn btn-edit" onclick="viewDocument('${doc.name}')" title="${t('view')}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn btn-del" onclick="removeDocument(${doc.id})" title="${t('remove')}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listElement.innerHTML = html;
+        }
+
+        function updateDocumentListExisting() {
+            const listElement = document.getElementById('documentListExisting');
+            
+            if (documentsExisting.length === 0) {
+                listElement.innerHTML = `<p style="color: var(--cc-text-muted); font-size: 12px; margin-top: 5px;">${t('noDocumentsUploaded')}</p>`;
+                return;
+            }
+            
+            let html = '';
+            documentsExisting.forEach(doc => {
+                const fileSize = doc.size ? `(${(doc.size / 1024).toFixed(1)} KB)` : '';
+                html += `
+                    <div class="document-item">
+                        <div class="document-name">
+                            <i class="fas fa-file-alt"></i>
+                            <span>${doc.name}</span>
+                            <small>${fileSize}</small>
+                        </div>
+                        <div class="document-date">${formatDate(doc.date)}</div>
+                        <div class="document-actions">
+                            <button class="action-btn btn-edit" onclick="viewDocument('${doc.name}')" title="${t('view')}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn btn-del" onclick="removeDocumentExisting(${doc.id})" title="${t('remove')}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listElement.innerHTML = html;
+        }
+
+        function viewDocument(fileName) {
+            showToast(t('viewingDocument', { name: fileName }), 'success');
+            // In a real application, this would open document
+        }
+
         // ====================== SAVE FUNCTION (FIXED) ======================
         function saveStaff() {
             console.log('💾 Saving staff data...');
             
-            // Get form values
-            const editId = document.getElementById('editId').value;
-            const id = document.getElementById('inpId').value.trim();
-            const name = document.getElementById('inpName').value.trim();
-            
-            // Validation
-            if (!id) {
-                showToast('Employee ID is required', 'error');
-                document.getElementById('inpId').focus();
-                return;
-            }
-            
-            if (!name) {
-                showToast('Employee name is required', 'error');
-                document.getElementById('inpName').focus();
-                return;
-            }
-            
-            // Check for duplicate ID (only for new records)
-            if (!editId) {
-                const duplicate = employees.find(e => e.id === id);
-                if (duplicate) {
-                    showToast(`Employee ID "${id}" already exists`, 'error');
+            try {
+                // Get form values
+                const editId = document.getElementById('editId').value;
+                const id = document.getElementById('inpId').value.trim();
+                const name = document.getElementById('inpName').value.trim();
+                const staffType = document.getElementById('inpStaffType').value;
+                
+                // Validation
+                if (!id) {
+                    showToast(t('employeeIdRequired'), 'error');
                     document.getElementById('inpId').focus();
                     return;
                 }
-            }
-            
-            // Collect form data
-            const formData = {
-                staffType: document.getElementById('inpStaffType').value,
-                id: id,
-                name: name,
-                nationality: document.getElementById('inpNationality').value,
-                designation: document.getElementById('inpDesignation').value.trim(),
-                branch: document.getElementById('inpBranch').value,
-                hireDate: document.getElementById('inpHireDate').value,
-                entryIssued: document.getElementById('inpEntryIssued').value,
-                entryExp: document.getElementById('inpEntryExp').value,
-                dateEntry: document.getElementById('inpDateEntry').value,
-                visitVisaExp: document.getElementById('inpVisitVisaExp').value,
-                mohreOffer: document.getElementById('inpMohreOffer').value,
-                offerSigned: document.getElementById('inpOfferSigned').value,
-                statusSub: document.getElementById('inpStatusSub').value,
-                statusApp: document.getElementById('inpStatusApp').value,
-                cancelExp: document.getElementById('inpCancelExp').value,
-                medSch: document.getElementById('inpMedSch').value,
-                medComp: document.getElementById('inpMedComp').value,
-                medResult: document.getElementById('inpMedResult').value,
-                eidBio: document.getElementById('inpEidBio').value,
-                eidRec: document.getElementById('inpEidRec').value,
-                visaApp: document.getElementById('inpVisaApp').value,
-                visaIssued: document.getElementById('inpVisaIssued').value,
-                visaExp: document.getElementById('inpVisaExp').value,
-                itSetup: document.getElementById('inpItSetup').value,
-                adminSetup: document.getElementById('inpAdminSetup').value,
-                orientation: document.getElementById('inpOrientation').value,
-                branchStartDate: document.getElementById('inpBranchStart').value,
-                passportNo: document.getElementById('inpPassportNo').value,
-                passportExp: document.getElementById('inpPassportExp').value,
-                medExpMain: document.getElementById('inpMedExpMain').value,
-                lastUpdated: new Date().toISOString()
-            };
-
-            console.log('Form data:', formData);
-            
-            if (editId) {
-                // Update existing employee
-                const index = employees.findIndex(e => e.id === editId);
-                if (index !== -1) {
-                    employees[index] = { ...employees[index], ...formData };
-                    console.log(`✅ Updated employee: ${id}`);
-                } else {
-                    showToast('Employee not found', 'error');
+                
+                if (!name) {
+                    showToast(t('employeeNameRequired'), 'error');
+                    document.getElementById('inpName').focus();
                     return;
                 }
-            } else {
-                // Add new employee
-                employees.unshift(formData);
-                console.log(`✅ Added new employee: ${id}`);
+                
+                // Check for duplicate ID (only for new records)
+                if (!editId) {
+                    const duplicate = employees.find(e => e.id === id);
+                    if (duplicate) {
+                        showToast(t('employeeIdAlreadyExists', { id }), 'error');
+                        document.getElementById('inpId').focus();
+                        return;
+                    }
+                }
+                
+                // Create base employee object
+                const formData = {
+                    staffType: staffType,
+                    id: id,
+                    name: name,
+                    nationality: document.getElementById('inpNationality').value,
+                    designation: document.getElementById('inpDesignation').value.trim(),
+                    branch: document.getElementById('inpBranch').value,
+                    hireDate: document.getElementById('inpHireDate').value,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Add documents based on staff type
+                formData.documents = staffType === 'new' ? documents : documentsExisting;
+                
+                // Add fields based on staff type
+                if (staffType === 'new') {
+                    // New Staff fields
+                    formData.entryIssued = document.getElementById('inpEntryIssued').value;
+                    formData.entryConfirmed = document.getElementById('inpEntryConfirmed').value;
+                    formData.entryExp = document.getElementById('inpEntryExp').value;
+                    formData.dateEntry = document.getElementById('inpDateEntry').value;
+                    formData.visitVisaExp = document.getElementById('inpVisitVisaExp').value;
+                    formData.entryResponsible = document.getElementById('inpEntryResponsible').value;
+                    
+                    formData.mohreOffer = document.getElementById('inpMohreOffer').value;
+                    formData.offerSigned = document.getElementById('inpOfferSigned').value;
+                    formData.laborContract = document.getElementById('inpLaborContract').value;
+                    formData.laborSigned = document.getElementById('inpLaborSigned').value;
+                    formData.statusSub = document.getElementById('inpStatusSub').value;
+                    formData.statusApp = document.getElementById('inpStatusApp').value;
+                    formData.workPermit = document.getElementById('inpWorkPermit').value;
+                    formData.cancelExp = document.getElementById('inpCancelExp').value;
+                    formData.immigrationResponsible = document.getElementById('inpImmigrationResponsible').value;
+                    
+                    formData.medSch = document.getElementById('inpMedSch').value;
+                    formData.medComp = document.getElementById('inpMedComp').value;
+                    formData.medResult = document.getElementById('inpMedResult').value;
+                    formData.healthCard = document.getElementById('inpHealthCard').value;
+                    formData.medInsurance = document.getElementById('inpMedInsurance').value;
+                    formData.eidBio = document.getElementById('inpEidBio').value;
+                    formData.eidCardPrinted = document.getElementById('inpEidCardPrinted').value;
+                    formData.eidRec = document.getElementById('inpEidRec').value;
+                    formData.medicalResponsible = document.getElementById('inpMedicalResponsible').value;
+                    
+                    formData.visaApp = document.getElementById('inpVisaApp').value;
+                    formData.visaIssued = document.getElementById('inpVisaIssued').value;
+                    formData.visaStamped = document.getElementById('inpVisaStamped').value;
+                    formData.visaExp = document.getElementById('inpVisaExp').value;
+                    formData.laborCard = document.getElementById('inpLaborCard').value;
+                    formData.fedAuthReg = document.getElementById('inpFedAuthReg').value;
+                    formData.visaResponsible = document.getElementById('inpVisaResponsible').value;
+                    
+                    formData.bankAccount = document.getElementById('inpBankAccount').value;
+                    formData.accommodation = document.getElementById('inpAccommodation').value;
+                    formData.uniform = document.getElementById('inpUniform').value;
+                    formData.equipment = document.getElementById('inpEquipment').value;
+                    formData.itSetup = document.getElementById('inpItSetup').value;
+                    formData.adminSetup = document.getElementById('inpAdminSetup').value;
+                    formData.orientation = document.getElementById('inpOrientation').value;
+                    formData.branchStartDate = document.getElementById('inpBranchStart').value;
+                    formData.onboardingResponsible = document.getElementById('inpOnboardingResponsible').value;
+                    formData.notes = document.getElementById('inpNotes').value;
+                } else {
+                    // Existing Staff fields
+                    formData.passportNo = document.getElementById('inpPassportNo').value;
+                    formData.passportExp = document.getElementById('inpPassportExp').value;
+                    formData.medExpMain = document.getElementById('inpMedExpMain').value;
+                    formData.visaExpExisting = document.getElementById('inpVisaExpExisting').value;
+                    formData.laborCardExp = document.getElementById('inpLaborCardExp').value;
+                    formData.eidExp = document.getElementById('inpEidExp').value;
+                    formData.notesExisting = document.getElementById('inpNotesExisting').value;
+                }
+                
+                console.log('Form data:', formData);
+                
+                if (editId) {
+                    // Update existing employee
+                    const index = employees.findIndex(e => e.id === editId);
+                    if (index !== -1) {
+                        employees[index] = { ...employees[index], ...formData };
+                        console.log(`✅ Updated employee: ${id}`);
+                    } else {
+                        showToast(t('employeeNotFound'), 'error');
+                        return;
+                    }
+                } else {
+                    // Add new employee
+                    employees.unshift(formData);
+                    console.log(`✅ Added new employee: ${id}`);
+                }
+                
+                // Save and update UI
+                saveData();
+                closeModal('staffModal');
+                showToast(editId ? t('employeeUpdatedSuccessfully') : t('employeeAddedSuccessfully'), 'success');
+                
+            } catch (error) {
+                console.error('Error saving staff:', error);
+                showToast(t('errorOccurred'), 'error');
             }
-            
-            // Save and update UI
-            saveData();
-            closeModal('staffModal');
-            showToast(`Employee ${editId ? 'updated' : 'added'} successfully`, 'success');
         }
 
         function deleteEmployee(id) {
-            if (confirm(`Are you sure you want to delete employee ${id}? This action cannot be undone.`)) {
+            if (confirm(t('areYouSureDelete', { id }))) {
                 const originalLength = employees.length;
                 employees = employees.filter(e => e.id !== id);
                 
+                // Force save to localStorage immediately
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
+                
                 if (employees.length < originalLength) {
-                    saveData();
-                    showToast('Employee deleted successfully', 'success');
+                    showToast(t('employeeDeletedSuccessfully'), 'success');
+                    // Reload data to ensure it's saved
+                    loadData();
                 } else {
-                    showToast('Employee not found', 'error');
+                    showToast(t('employeeNotFound'), 'error');
                 }
             }
         }
@@ -1049,13 +1820,13 @@
                 if (status.category === 'expired') {
                     notifications.push({
                         type: 'error',
-                        message: `${emp.name} (${emp.id}) - Documents Expired`,
+                        message: `${emp.name} (${emp.id}) - ${t('documentsExpired')}`,
                         employeeId: emp.id
                     });
                     notificationCount++;
                 } else if (status.category === 'warning') {
                     const pass = getExpiryStatus(emp.passportExp);
-                    const visa = getExpiryStatus(emp.visaExp);
+                    const visa = getExpiryStatus(emp.visaExp || emp.visaExpExisting);
                     const med = getExpiryStatus(emp.medExpMain);
                     
                     let expiringItem = 'Documents';
@@ -1065,7 +1836,7 @@
                     
                     notifications.push({
                         type: 'warning',
-                        message: `${emp.name} (${emp.id}) - ${expiringItem} expiring in ${pass.daysLeft || visa.daysLeft || med.daysLeft} days`,
+                        message: `${emp.name} (${emp.id}) - ${t('documentsExpiringIn', { item: expiringItem, days: pass.daysLeft || visa.daysLeft || med.daysLeft })}`,
                         employeeId: emp.id
                     });
                     notificationCount++;
@@ -1073,10 +1844,25 @@
                     const nextStep = getNextStep(emp);
                     notifications.push({
                         type: 'info',
-                        message: `${emp.name} (${emp.id}) - ${nextStep}`,
+                        message: `${emp.name} (${emp.id}) - ${nextStep.step}`,
                         employeeId: emp.id
                     });
                     notificationCount++;
+                }
+                
+                // Check for overdue entry permits
+                if (emp.staffType === 'new' && emp.entryIssued && !emp.entryConfirmed) {
+                    const issueDate = new Date(emp.entryIssued);
+                    const daysSinceIssue = Math.floor((today - issueDate) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysSinceIssue > 60) {
+                        notifications.push({
+                            type: 'warning',
+                            message: `${emp.name} (${emp.id}) - ${t('entryPermitConfirmationOverdue', { days: daysSinceIssue })}`,
+                            employeeId: emp.id
+                        });
+                        notificationCount++;
+                    }
                 }
             });
 
@@ -1086,8 +1872,8 @@
                 notificationsList.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-bell-slash"></i>
-                        <h3>No alerts</h3>
-                        <p>All employees are up to date</p>
+                        <h3>${t('noAlerts')}</h3>
+                        <p>${t('allEmployeesUpToDate')}</p>
                     </div>
                 `;
             } else {
@@ -1102,7 +1888,7 @@
                                 <div style="flex: 1;">
                                     <div style="font-weight: 600; font-size: 13px;">${notif.message}</div>
                                     <small style="color: #666; font-size: 11px;">
-                                        Click arrow to view
+                                        ${t('clickArrowToView')}
                                     </small>
                                 </div>
                                 <button class="action-btn btn-edit" onclick="editEmployee('${notif.employeeId}'); closeModal('notificationsModal')">
@@ -1126,7 +1912,7 @@
         function printReport(id) {
             const emp = employees.find(e => e.id === id);
             if (!emp) {
-                showToast('Employee not found', 'error');
+                showToast(t('employeeNotFound'), 'error');
                 return;
             }
 
@@ -1139,10 +1925,10 @@
             
             const status = getOverallStatus(emp);
             document.getElementById('prStatus').innerText = status.label;
-            document.getElementById('prStage').innerText = emp.staffType === 'new' ? 'Onboarding' : 'Employed';
+            document.getElementById('prStage').innerText = emp.staffType === 'new' ? t('onboarding') : t('employed');
 
             // Set checkmarks
-            const chk = (val) => val ? '✅ ' + formatDate(val) : '❌ Pending';
+            const chk = (val) => val ? '✅ ' + formatDate(val) : '❌ ' + t('pending');
             document.getElementById('prEntry').innerText = chk(emp.entryIssued);
             document.getElementById('prMedical').innerText = chk(emp.medResult);
             document.getElementById('prEID').innerText = chk(emp.eidRec);
@@ -1150,20 +1936,70 @@
             document.getElementById('prPassExp').innerText = emp.passportExp ? formatDate(emp.passportExp) : '-';
             document.getElementById('prVisaExp').innerText = emp.visaExp ? formatDate(emp.visaExp) : '-';
 
+            // Generate onboarding timeline
+            if (emp.staffType === 'new') {
+                const timeline = document.getElementById('onboardingTimeline');
+                let timelineHTML = '';
+                
+                const steps = [
+                    { name: t('hireApproval'), date: emp.hireDate },
+                    { name: t('entryPermitIssued'), date: emp.entryIssued },
+                    { name: t('entryPermitConfirmed'), date: emp.entryConfirmed },
+                    { name: t('dateOfEntry'), date: emp.dateEntry },
+                    { name: t('laborContract'), date: emp.laborSigned },
+                    { name: t('medicalResult'), date: emp.medResult },
+                    { name: t('medicalInsurance'), date: emp.medInsurance },
+                    { name: t('eidReceived'), date: emp.eidRec },
+                    { name: t('visaIssued'), date: emp.visaIssued },
+                    { name: t('visaStamped'), date: emp.visaStamped },
+                    { name: t('bankAccount'), date: emp.bankAccount },
+                    { name: t('branchStartDate'), date: emp.branchStartDate }
+                ];
+                
+                steps.forEach((step, index) => {
+                    if (step.date) {
+                        const prevDate = index > 0 && steps[index-1].date ? new Date(steps[index-1].date) : null;
+                        const currDate = new Date(step.date);
+                        const daysTaken = prevDate ? Math.ceil((currDate - prevDate) / (1000 * 60 * 60 * 24)) : '-';
+                        
+                        timelineHTML += `
+                            <tr>
+                                <td>${step.name}</td>
+                                <td>-</td>
+                                <td>${formatDate(step.date)}</td>
+                                <td>${daysTaken}</td>
+                                <td>${getStepResponsible(step.name)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                timeline.innerHTML = timelineHTML;
+            }
+
             // Actions list
             let actions = '';
-            if (emp.hireDate) actions += `<li>Hire Approved on ${formatDate(emp.hireDate)}</li>`;
-            if (emp.entryIssued) actions += `<li>Entry Permit Issued: ${formatDate(emp.entryIssued)}</li>`;
-            if (emp.dateEntry) actions += `<li>Date of Entry: ${formatDate(emp.dateEntry)}</li>`;
-            if (emp.medResult) actions += `<li>Medical Fit: ${formatDate(emp.medResult)}</li>`;
-            if (emp.eidRec) actions += `<li>EID Received: ${formatDate(emp.eidRec)}</li>`;
-            if (emp.visaIssued) actions += `<li>Residency Visa Stamped: ${formatDate(emp.visaIssued)}</li>`;
-            if (emp.branchStartDate) actions += `<li>Handed over to branch on ${formatDate(emp.branchStartDate)}</li>`;
+            if (emp.hireDate) actions += `<li>${t('hireApprovedOn')} ${formatDate(emp.hireDate)}</li>`;
+            if (emp.entryIssued) actions += `<li>${t('entryPermitIssued')}: ${formatDate(emp.entryIssued)}</li>`;
+            if (emp.entryConfirmed) actions += `<li>${t('entryPermitConfirmed')}: ${formatDate(emp.entryConfirmed)}</li>`;
+            if (emp.dateEntry) actions += `<li>${t('dateOfEntry')}: ${formatDate(emp.dateEntry)}</li>`;
+            if (emp.laborContract) actions += `<li>${t('laborContractPrepared')}: ${formatDate(emp.laborContract)}</li>`;
+            if (emp.laborSigned) actions += `<li>${t('laborContractSigned')}: ${formatDate(emp.laborSigned)}</li>`;
+            if (emp.medResult) actions += `<li>${t('medicalFit')}: ${formatDate(emp.medResult)}</li>`;
+            if (emp.medInsurance) actions += `<li>${t('medicalInsurance')}: ${formatDate(emp.medInsurance)}</li>`;
+            if (emp.eidRec) actions += `<li>${t('eidReceived')}: ${formatDate(emp.eidRec)}</li>`;
+            if (emp.visaIssued) actions += `<li>${t('residencyVisaIssued')}: ${formatDate(emp.visaIssued)}</li>`;
+            if (emp.visaStamped) actions += `<li>${t('visaStamped')}: ${formatDate(emp.visaStamped)}</li>`;
+            if (emp.bankAccount) actions += `<li>${t('bankAccountOpened')}: ${formatDate(emp.bankAccount)}</li>`;
+            if (emp.branchStartDate) actions += `<li>${t('handedOverToBranch')} ${formatDate(emp.branchStartDate)}</li>`;
+            
+            if (emp.notes) actions += `<li>${t('notes')}: ${emp.notes}</li>`;
+            
             document.getElementById('prActions').innerHTML = actions || '<li>No actions recorded yet.</li>';
 
             // Show stamp if ready
             const stamp = document.getElementById('prStamp');
-            stamp.style.display = status.label.includes('Ready') ? 'flex' : 'none';
+            stamp.style.display = status.label.includes(t('ready')) ? 'flex' : 'none';
 
             // Print after short delay
             setTimeout(() => {
@@ -1214,7 +2050,7 @@
 
         function exportToCSV() {
             if (employees.length === 0) {
-                showToast('No data to export', 'warning');
+                showToast(t('noDataToExport'), 'warning');
                 return;
             }
             
@@ -1237,7 +2073,7 @@
                     `"${emp.designation || ''}"`,
                     `"${emp.nationality || ''}"`,
                     emp.passportExp || '',
-                    emp.visaExp || '',
+                    emp.visaExp || emp.visaExpExisting || '',
                     emp.medExpMain || '',
                     status.label,
                     emp.lastUpdated ? formatDate(emp.lastUpdated) : ''
@@ -1255,7 +2091,7 @@
             link.click();
             document.body.removeChild(link);
             
-            showToast('Data exported successfully', 'success');
+            showToast(t('dataExportedSuccessfully'), 'success');
         }
 
         // ====================== EVENT LISTENERS ======================
