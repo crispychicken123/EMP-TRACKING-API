@@ -89,6 +89,18 @@
         .header-actions { display: flex; gap: 15px; align-items: center; }
         .header-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--cc-text-muted); transition: color 0.2s; position: relative; padding: 8px; }
         .header-btn:hover { color: var(--cc-black); }
+        
+        /* New Reset Button Style */
+        .btn-reset-system {
+            color: var(--color-danger) !important;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .btn-reset-system:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-color: var(--color-danger);
+        }
+
         .badge-notify { position: absolute; top: -5px; right: -5px; background: var(--color-danger); color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; display: none; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .lang-toggle { background: var(--cc-red); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
 
@@ -270,13 +282,18 @@
             </div>
         </div>
         <div class="header-actions">
-            <button class="lang-toggle" onclick="toggleLanguage()">
-                <span id="langText">العربية</span>
+            <!-- NEW: Reset System Button -->
+            <button class="header-btn btn-reset-system" title="Delete All Data & Reset System" onclick="resetSystem()">
+                <i class="fas fa-trash-alt"></i>
             </button>
+            
             <button class="header-btn" title="Toggle Dark Mode" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
             <button class="header-btn" title="Daily Alerts & 15-Day Warning" onclick="showNotifications()">
                 <i class="fas fa-bell"></i>
                 <span id="notifCount" class="badge-notify">0</span>
+            </button>
+            <button class="lang-toggle" onclick="toggleLanguage()">
+                <span id="langText">العربية</span>
             </button>
         </div>
     </header>
@@ -811,7 +828,10 @@
                 stampVisaInPassport: "Stamp Visa in Passport",
                 openBankAccount: "Open Bank Account",
                 sendToRestaurantHandover: "Send to Restaurant (Handover)",
-                readyForHandover: "Ready for Handover"
+                readyForHandover: "Ready for Handover",
+                systemResetWarning: "WARNING: This will delete ALL employee data permanently. This cannot be undone!",
+                systemResetConfirm: "Are you absolutely sure you want to delete all data?",
+                systemResetSuccess: "System reset successfully. All data cleared."
             },
             ar: {
                 appTitle: "موارد بشرية كريسبي تشيكن",
@@ -871,7 +891,7 @@
                 medicalResultIssued: "إصدار نتيجة الفحص الطبي",
                 healthCardIssued: "إصدار البطاقة الصحية",
                 medicalInsuranceRegistered: "تسجيل التأمين الصحي",
-                eidBiometrics: "البصميات للهوية الإماراتية",
+                eidBiometrics: "البصمات للهوية الإماراتية",
                 eidCardPrinted: "طباعة بطاقة الهوية",
                 eidReceived: "استلام بطاقة الهوية",
                 residencyVisa: "5. تأشيرة الإقامة",
@@ -966,14 +986,18 @@
                 stampVisaInPassport: "ختم التأشيرة في جواز السفر",
                 openBankAccount: "فتح حساب بنكي",
                 sendToRestaurantHandover: "إرسال إلى المطعم (التسليم)",
-                readyForHandover: "جاهز للتسليم"
+                readyForHandover: "جاهز للتسليم",
+                systemResetWarning: "تحذير: سيتم حذف جميع بيانات الموظفين بشكل دائم. لا يمكن التراجع عن هذا الإجراء!",
+                systemResetConfirm: "هل أنت متأكد تمامًا أنك تريد حذف جميع البيانات؟",
+                systemResetSuccess: "تم إعادة تعيين النظام بنجاح. تم مسح جميع البيانات."
             }
         };
 
         let currentLang = localStorage.getItem('cc_hr_lang') || 'en';
 
         // ====================== CONFIGURATION ======================
-        const STORAGE_KEY = 'crispy_chicken_hr_system_v2.2';
+        const STORAGE_KEY = 'crispy_chicken_hr_system_v2.3'; // Updated version
+        const INIT_FLAG_KEY = 'cc_hr_initialized'; // Flag to check if user has used system before
         let employees = [];
         let filteredEmployees = [];
         let documents = []; // Store uploaded documents
@@ -1072,6 +1096,7 @@
         function loadData() {
             console.log('📂 Loading data from localStorage...');
             const stored = localStorage.getItem(STORAGE_KEY);
+            const isInitialized = localStorage.getItem(INIT_FLAG_KEY);
             
             if (stored) {
                 try {
@@ -1083,11 +1108,17 @@
                 }
             }
             
-            // If no data exists, create sample data
-            if (employees.length === 0) {
-                console.log('📝 Creating sample data...');
+            // FIX FOR DATA COMING BACK BUG:
+            // Only load sample data if the system has NEVER been initialized before.
+            // If the user has used it (isInitialized = true) and the array is empty,
+            // it means they deleted it, and we should keep it empty.
+            if (!isInitialized) {
+                console.log('📝 First time setup: Creating sample data...');
                 employees = getSampleData();
+                localStorage.setItem(INIT_FLAG_KEY, 'true');
                 saveData();
+            } else {
+                console.log('📂 System initialized. Loading saved state (might be empty).');
             }
             
             updateUI();
@@ -1161,6 +1192,32 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
             updateUI();
             updateNotifications();
+        }
+
+        // ====================== RESET SYSTEM FUNCTION ======================
+        function resetSystem() {
+            // Double confirmation for safety
+            const confirmMsg = t('systemResetWarning');
+            const finalMsg = t('systemResetConfirm');
+            
+            if (!confirm(confirmMsg)) return;
+            if (!confirm(finalMsg)) return;
+            
+            console.log('🗑️ Resetting System...');
+            
+            // 1. Clear the employees array
+            employees = [];
+            documents = [];
+            documentsExisting = [];
+            
+            // 2. Save the empty array to localStorage
+            // We DO NOT remove the 'INIT_FLAG_KEY'. This keeps the system "initialized",
+            // which prevents the sample data from coming back on refresh.
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+            
+            // 3. Update UI
+            updateUI();
+            showToast(t('systemResetSuccess'), 'success');
         }
 
         // ====================== BUSINESS LOGIC ======================
@@ -1653,7 +1710,7 @@
             // In a real application, this would open document
         }
 
-        // ====================== SAVE FUNCTION (FIXED) ======================
+        // ====================== SAVE FUNCTION ======================
         function saveStaff() {
             console.log('💾 Saving staff data...');
             
