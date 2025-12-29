@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crispy Chicken - HR Management System</title>
+    <title>Crispy Chicken - HR & Compliance System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* --- CSS VARIABLES --- */
@@ -13,16 +13,26 @@
             --cc-white: #ffffff;
             --cc-gray: #f4f6f9;
             --cc-border: #e0e0e0;
+            --cc-text-muted: #666;
+            --cc-bg-modal: #ffffff;
+            --cc-table-hover: rgba(0,0,0,0.02);
+            --color-warning: #f59e0b;
+            --color-danger: #dc3545;
+            --color-success: #10b981;
+            --color-info: #3b82f6;
         }
 
         [data-theme="dark"] {
             --cc-black: #f0f0f0;
-            --cc-white: #1a1a1a;
-            --cc-gray: #2a2a2a;
-            --cc-border: #444;
+            --cc-white: #1e1e1e;
+            --cc-gray: #252526;
+            --cc-border: #333;
+            --cc-text-muted: #aaa;
+            --cc-bg-modal: #2d2d2d;
+            --cc-table-hover: rgba(255,255,255,0.05);
         }
 
-        * { box-sizing: border-box; outline: none; }
+        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--cc-gray);
@@ -30,177 +40,172 @@
             padding: 0;
             color: var(--cc-black);
             transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* --- PRINT STYLES (CRITICAL FIX) --- */
-        @media print {
-            @page { margin: 1cm; size: A4; }
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible; }
-            #printArea {
-                position: absolute; left: 0; top: 0; width: 100%;
-                background: white; color: black; padding: 20px; border: none; z-index: 9999;
-            }
-            .print-header { text-align: center; border-bottom: 2px solid var(--cc-red); padding-bottom: 10px; margin-bottom: 20px; }
-            .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-            .print-box { border: 1px solid #ddd; padding: 10px; border-radius: 4px; }
-            .print-label { font-weight: bold; font-size: 12px; color: #555; }
-            .print-value { font-size: 14px; margin-top: 2px; }
-            .print-status { text-align: center; font-weight: bold; font-size: 18px; margin: 20px 0; padding: 10px; border-radius: 8px; }
-            .print-status.ready { background-color: #d4edda; color: #155724; }
-            .print-status.pending { background-color: #fff3cd; color: #856404; }
+            min-height: 100vh;
         }
 
         /* --- HEADER --- */
         header {
-            background-color: var(--cc-black); color: var(--cc-white);
+            background-color: var(--cc-white); color: var(--cc-black);
             padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
             border-bottom: 4px solid var(--cc-red); position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .chef-icon { font-size: 28px; background: var(--cc-red); color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
         .app-title h1 { margin: 0; font-size: 18px; font-weight: 700; }
-        .app-title span { font-size: 11px; opacity: 0.7; text-transform: uppercase; }
+        .app-title span { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .header-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--cc-text-muted); transition: color 0.2s; position: relative; padding: 8px; }
+        .header-btn:hover { color: var(--cc-black); }
+        .badge-notify { position: absolute; top: -5px; right: -5px; background: var(--color-danger); color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; display: none; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
         /* --- CONTROLS --- */
-        .controls {
-            padding: 15px 24px; background: var(--cc-white); display: flex; gap: 12px; align-items: center;
-            border-bottom: 1px solid var(--cc-border); flex-wrap: wrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .controls { padding: 15px 24px; background: var(--cc-white); display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--cc-border); flex-wrap: wrap; }
         .search-wrapper { flex: 1; min-width: 200px; position: relative; }
-        .search-wrapper input {
-            width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ccc; border-radius: 20px;
-            font-size: 14px; background-color: var(--cc-white); color: var(--cc-black);
-        }
+        .search-wrapper input { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid var(--cc-border); border-radius: 20px; font-size: 14px; background-color: var(--cc-gray); color: var(--cc-black); }
+        .search-wrapper input:focus { border-color: var(--cc-red); }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888; }
 
-        .filter-wrapper { display: flex; gap: 8px; align-items: center; }
-        .filter-wrapper select { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; background-color: var(--cc-white); color: var(--cc-black); }
-
-        button {
-            padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;
-            color: white; display: inline-flex; align-items: center; gap: 6px; transition: transform 0.2s;
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        
-        .btn-quick { background-color: #6f42c1; } /* Purple */
-        .btn-import { background-color: #6610f2; } /* Indigo */
-        .btn-branch { background-color: #444; }
-        .btn-export { background-color: #28a745; } /* Green */
-        .btn-email { background-color: #007bff; } /* Blue */
+        button { padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; color: white; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
         .btn-add { background-color: var(--cc-red); }
-        .btn-print-id { background-color: #17a2b8; } /* Cyan */
-        .btn-reset { background-color: transparent; border: 1px solid #ccc; color: #666; font-size: 11px; }
+        .btn-export { background-color: #28a745; }
+        .btn-print { background-color: #6c757d; }
 
         /* --- DASHBOARD --- */
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; padding: 20px 24px 0 24px; }
-        .stat-card {
-            background: var(--cc-white); padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-top: 4px solid transparent; display: flex; flex-direction: column; align-items: center;
-        }
+        .stat-card { background: var(--cc-white); padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); border-top: 4px solid transparent; display: flex; flex-direction: column; align-items: center; }
         .stat-number { font-size: 28px; font-weight: 800; color: var(--cc-black); margin-bottom: 2px; }
-        .stat-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; }
+        .stat-label { font-size: 11px; font-weight: 600; color: var(--cc-text-muted); text-transform: uppercase; }
         
-        .stat-total { border-color: #666; }
-        .stat-working { border-color: #28a745; }
-        .stat-warning { border-color: #ffc107; }
-        .stat-issue { border-color: #dc3545; }
+        .stat-total { border-color: #666; } .stat-new { border-color: #3b82f6; } 
+        .stat-active { border-color: #10b981; } .stat-alert { border-color: #f59e0b; }
 
         /* --- TABLE --- */
-        .table-container {
-            margin: 20px 24px 24px 24px; background: var(--cc-white); border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--cc-border); overflow: hidden;
-        }
-        .table-header { padding: 12px 20px; background: #f8f9fa; border-bottom: 1px solid var(--cc-border); display: flex; justify-content: space-between; align-items: center; }
-        .table-scroll { overflow-x: auto; max-height: calc(100vh - 420px); }
-        table { width: 100%; border-collapse: collapse; min-width: 2200px; }
+        .table-container { margin: 20px 24px 24px 24px; background: var(--cc-white); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); border: 1px solid var(--cc-border); overflow: hidden; }
+        .table-header { padding: 12px 20px; background: var(--cc-gray); border-bottom: 1px solid var(--cc-border); display: flex; justify-content: space-between; align-items: center; }
+        .table-scroll { overflow-x: auto; max-height: calc(100vh - 260px); }
+        table { width: 100%; border-collapse: collapse; min-width: 1800px; }
         
-        th {
-            background-color: #f8f9fa; color: #444; font-weight: 600; font-size: 11px; text-transform: uppercase;
-            padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--cc-border); position: sticky; top: 0; z-index: 10;
-        }
-        td { padding: 8px; border-bottom: 1px solid #eee; font-size: 12px; color: var(--cc-black); vertical-align: middle; }
-        tr:hover { background-color: rgba(0,0,0,0.02); }
-        tr.new-staff { background-color: rgba(0, 123, 255, 0.05); }
+        th { background-color: var(--cc-gray); color: var(--cc-text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; padding: 12px 10px; text-align: left; border-bottom: 2px solid var(--cc-border); position: sticky; top: 0; z-index: 10; }
+        td { padding: 10px; border-bottom: 1px solid var(--cc-border); font-size: 13px; color: var(--cc-black); vertical-align: middle; }
+        tr:hover { background-color: var(--cc-table-hover); }
+        
+        tr.new-staff-row { background-color: rgba(59, 130, 246, 0.03); border-left: 3px solid #3b82f6; }
+        tr.alert-row { background-color: rgba(245, 158, 11, 0.03); border-left: 3px solid #f59e0b; }
 
-        /* --- STATUS BADGES --- */
-        .badge { padding: 4px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; white-space: nowrap; }
-        .status-working { background-color: #d4edda; color: #155724; } 
-        .status-expiring { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; } 
-        .status-expired { background-color: #f8d7da; color: #721c24; } 
-        .status-missing { background-color: #f5c6cb; color: #721c24; border: 1px solid #e2e6ea; } 
-        .status-resigned { background-color: #6c757d; color: white; border: 1px solid #5a6268; } 
+        /* Status & Badges */
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .status-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+        .status-expired { background-color: #fee2e2; color: #991b1b; border: 1px solid #dc3545; }
+        .status-ok { background-color: #d1fae5; color: #065f46; }
+        .status-process { background-color: #dbeafe; color: #1e40af; }
 
-        .progress-bg { background-color: #eee; border-radius: 10px; width: 80px; height: 8px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 5px; }
-        .progress-fill { height: 100%; background-color: var(--cc-red); }
+        .date-warning { color: #d97706; font-weight: bold; font-size: 11px; }
+        .date-expired { color: #dc3545; font-weight: bold; font-size: 11px; }
 
-        .action-btn { background: none; border: none; cursor: pointer; padding: 4px; font-size: 14px; }
-        .btn-edit { color: #007bff; }
-        .btn-del { color: #dc3545; }
+        .next-step-badge { display: inline-block; font-size: 11px; color: #555; background: #eee; padding: 2px 6px; border-radius: 4px; border-left: 3px solid #666; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- MODALS --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); justify-content: center; align-items: center; z-index: 1000;
-            opacity: 0; transition: opacity 0.3s;
-        }
+        .action-btn { background: none; border: none; cursor: pointer; padding: 6px; font-size: 15px; border-radius: 4px; transition: all 0.2s; }
+        .action-btn:hover { background-color: rgba(0,0,0,0.05); }
+        .btn-edit { color: #007bff; } 
+        .btn-del { color: #dc3545; } 
+        .btn-print { color: #666; }
+
+        /* --- MODAL --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); justify-content: center; align-items: center; z-index: 1000; opacity: 0; transition: opacity 0.2s; }
         .modal-overlay.open { display: flex; opacity: 1; }
-        .modal-content {
-            background: var(--cc-white); padding: 0; border-radius: 12px; width: 90%; max-width: 1000px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column;
-            animation: modalSlideIn 0.3s ease;
-        }
-        @keyframes modalSlideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-content { background: var(--cc-bg-modal); padding: 0; border-radius: 12px; width: 95%; max-width: 1100px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.3); border: 1px solid var(--cc-border); }
+        .modal-header { padding: 15px 25px; border-bottom: 1px solid var(--cc-border); display: flex; justify-content: space-between; align-items: center; background: var(--cc-gray); border-radius: 12px 12px 0 0; }
+        .modal-body { padding: 25px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 15px 25px; border-top: 1px solid var(--cc-border); display: flex; justify-content: space-between; background: var(--cc-gray); border-radius: 0 0 12px 12px; }
         
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--cc-border); display: flex; justify-content: space-between; align-items: center; background: #fcfcfc; }
-        .modal-body { padding: 20px; overflow-y: auto; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--cc-border); display: flex; justify-content: space-between; gap: 10px; background: #fcfcfc; }
-        
-        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .form-section-title { grid-column: span 4; border-top: 2px solid var(--cc-border); margin-top: 15px; padding-top: 10px; color: var(--cc-red); font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         .form-group { margin-bottom: 5px; }
-        .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 11px; color: #555; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; background-color: var(--cc-white); color: var(--cc-black); }
-        .form-group input:focus, .form-group select:focus { border-color: var(--cc-red); }
-        .divider { grid-column: span 3; border-top: 1px solid var(--cc-border); margin: 10px 0 5px 0; color: var(--cc-red); font-weight: bold; font-size: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 11px; color: var(--cc-text-muted); }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid var(--cc-border); border-radius: 4px; font-size: 12px; background: var(--cc-white); color: var(--cc-black); }
+        .form-group input:focus, .form-group select:focus { border-color: var(--cc-red); box-shadow: 0 0 0 2px rgba(228, 0, 43, 0.1); }
+        .form-group input[type="date"] { min-height: 36px; }
+
+        .required label::after { content: " *"; color: var(--color-danger); }
+
+        /* --- PROFESSIONAL REPORT STYLES (PDF/PRINT) --- */
+        #printArea { display: none; }
+
+        .report-header { text-align: center; border-bottom: 3px solid var(--cc-red); padding-bottom: 20px; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .report-logo { width: 80px; height: 80px; background: var(--cc-red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: white; }
+        .report-title h2 { margin: 0; color: #333; font-size: 24px; }
+        .report-title p { margin: 5px 0 0; color: #666; font-size: 14px; }
         
-        /* Branch List Styling */
-        .branch-list-ul { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; border: 1px solid #eee; margin-top: 15px; }
-        .branch-list-ul li { padding: 8px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; }
-        .branch-list-ul li:hover { background-color: #f8f9fa; }
+        .report-section { margin-bottom: 25px; }
+        .report-section h3 { font-size: 16px; color: var(--cc-red); border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0; margin-bottom: 10px; }
+        .report-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; }
+        .report-table th, .report-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
+        .report-table th { background-color: #f9f9f9; color: #333; }
         
-        .branch-stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
-        .branch-stat-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; background: #fafafa; }
-        .branch-stat-count { font-size: 24px; font-weight: bold; color: var(--cc-red); display: block; }
-        .branch-stat-name { font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        
-        .toast {
-            visibility: hidden; min-width: 280px; background-color: #333; color: #fff; text-align: center;
-            border-radius: 50px; padding: 14px 24px; position: fixed; z-index: 2000; bottom: 30px;
-            left: 50%; transform: translateX(-50%) translateY(20px); box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            font-size: 14px; opacity: 0; transition: all 0.3s;
+        .status-stamp { 
+            width: 180px; height: 180px; border: 5px solid #28a745; color: #28a745; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 24px; transform: rotate(-15deg); opacity: 0.2; margin-top: 20px;
         }
+        .signature-area { margin-top: 80px; display: flex; justify-content: space-between; }
+        .sign-box { width: 40%; border-top: 2px solid #000; padding-top: 10px; text-align: center; font-size: 14px; color: #333; font-weight: bold;}
+
+        @media print {
+            body { margin: 0; background: white; }
+            header, .controls, .dashboard, .table-container, .modal-overlay, .toast { display: none !important; }
+            #printArea {
+                display: block !important;
+                position: absolute;
+                top: 0; left: 0; width: 100%;
+                background: white; color: black; padding: 40px; z-index: 99999;
+            }
+            .no-print { display: none; }
+            .status-stamp { opacity: 1; border-width: 5px; }
+            .report-header, .report-section { page-break-inside: avoid; }
+        }
+
+        .toast { visibility: hidden; min-width: 280px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 14px 24px; position: fixed; z-index: 2000; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); font-size: 14px; opacity: 0; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast.success { background-color: #28a745; }
         .toast.error { background-color: #dc3545; }
-        .toast.warning { background-color: #ffc107; color: #333; }
+        .toast.warning { background-color: #f59e0b; color: #000; }
 
-        /* Notification Panel */
-        .notification-panel {
-            position: fixed; top: 70px; right: 20px; width: 320px; background: var(--cc-white);
-            border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 99;
-            transform: translateX(350px); transition: transform 0.3s ease; max-height: 400px; overflow: hidden; display: flex; flex-direction: column;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--cc-text-muted);
         }
-        .notification-panel.open { transform: translateX(0); }
-        .notification-header { padding: 12px 15px; background: var(--cc-red); color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-        .notification-list { flex: 1; overflow-y: auto; padding: 10px 0; }
-        .notification-item { padding: 10px 15px; border-bottom: 1px solid var(--cc-border); font-size: 12px; display: flex; align-items: center; gap: 10px; }
-        .notification-item:last-child { border-bottom: none; }
-        .notification-icon { font-size: 16px; width: 20px; text-align: center; }
-        .notification-icon.expired { color: #dc3545; }
-        .notification-icon.warning { color: #ffc107; }
-        .notification-content { flex: 1; }
-        .notification-title { font-weight: 600; margin-bottom: 2px; }
-        .notification-date { color: #666; font-size: 11px; }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Loading */
+        .loading { display: none; text-align: center; padding: 20px; }
+        .spinner { border: 3px solid var(--cc-gray); border-top: 3px solid var(--cc-red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-section-title { grid-column: span 2; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .search-wrapper, select { width: 100%; margin-bottom: 10px; }
+            .dashboard { grid-template-columns: repeat(2, 1fr); }
+            header, .controls, .dashboard, .table-container { padding: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-section-title { grid-column: span 1; }
+            .dashboard { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -211,45 +216,33 @@
             <div class="chef-icon">👨‍🍳</div>
             <div class="app-title">
                 <h1>CRISPY CHICKEN HR</h1>
-                <span>Complete Management System</span>
+                <span>Compliance & Onboarding Tracker</span>
             </div>
         </div>
-        <div style="font-size: 11px; color: #ddd;">Last Saved: <span id="lastSavedTime">--</span></div>
+        <div class="header-actions">
+            <button class="header-btn" title="Toggle Dark Mode" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            <button class="header-btn" title="Daily Alerts & 15-Day Warning" onclick="showNotifications()">
+                <i class="fas fa-bell"></i>
+                <span id="notifCount" class="badge-notify">0</span>
+            </button>
+        </div>
     </header>
 
     <!-- Controls -->
     <div class="controls">
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Search ID, Name, or Branch..." onkeyup="filterData()">
+            <input type="text" id="searchInput" placeholder="Search ID, Name..." onkeyup="filterData()">
         </div>
-        
-        <button class="btn-print-id" onclick="printByIdInput()" title="Print Status for ID in search box">
-            <i class="fas fa-file-pdf"></i> Print Status
-        </button>
-
-        <div class="filter-wrapper">
-            <select id="statusFilter" onchange="filterData()">
-                <option value="">All Status</option>
-                <option value="working">🟢 Working Fine</option>
-                <option value="expiring">🟡 Expiring Soon (30d)</option>
-                <option value="expired">🔴 Expired</option>
-                <option value="missing">🔴 Missing Docs</option>
-                <option value="resigned">🔴 Resigned</option>
-            </select>
-            <select id="branchFilter" onchange="filterData()">
-                <option value="">All Branches</option>
-            </select>
-        </div>
-        
-        <button class="btn-quick" onclick="openQuickAddModal()">⚡ Quick Add</button>
-        <button class="btn-import" onclick="document.getElementById('fileImport').click()">📥 Import</button>
-        <input type="file" id="fileImport" style="display:none" onchange="importData(this)">
-        
-        <button class="btn-branch" onclick="openBranchModal()">🏢 Branches</button>
-        <button class="btn-export" onclick="exportToCSV()">📥 Excel</button>
-        <button class="btn-email" onclick="sendReportEmail()">📧 Email</button>
-        <button class="btn-add" onclick="openAddModal()">+ New Staff</button>
+        <div style="flex:1"></div>
+        <select id="typeFilter" onchange="filterData()" style="padding:8px; border-radius:4px; border:1px solid #ccc;">
+            <option value="">All Staff</option>
+            <option value="new">🔵 New Staff (Onboarding)</option>
+            <option value="existing">🟢 Existing Staff</option>
+            <option value="alert">🟠 Needs Attention</option>
+        </select>
+        <button class="btn-export" onclick="exportToCSV()"><i class="fas fa-download"></i> Excel</button>
+        <button class="btn-add" onclick="openAddModal()"><i class="fas fa-plus"></i> New Staff</button>
     </div>
 
     <!-- Stats -->
@@ -258,656 +251,1036 @@
             <div class="stat-number" id="totalCount">0</div>
             <div class="stat-label">Total Staff</div>
         </div>
-        <div class="stat-card stat-working">
-            <div class="stat-number" id="workingCount" style="color: #28a745;">0</div>
-            <div class="stat-label">Working Fine</div>
+        <div class="stat-card stat-new">
+            <div class="stat-number" id="newCount" style="color: #3b82f6;">0</div>
+            <div class="stat-label">Onboarding</div>
         </div>
-        <div class="stat-card stat-warning">
-            <div class="stat-number" id="expiringCount" style="color: #ffc107;">0</div>
-            <div class="stat-label">Expiring</div>
+        <div class="stat-card stat-active">
+            <div class="stat-number" id="activeCount" style="color: #10b981;">0</div>
+            <div class="stat-label">Active / Handed Over</div>
         </div>
-        <div class="stat-card stat-issue">
-            <div class="stat-number" id="issueCount" style="color: #dc3545;">0</div>
-            <div class="stat-label">Issues</div>
+        <div class="stat-card stat-alert">
+            <div class="stat-number" id="alertCount" style="color: #f59e0b;">0</div>
+            <div class="stat-label">Action Required</div>
         </div>
     </div>
 
-    <!-- Main Table -->
+    <!-- Table -->
     <div class="table-container">
         <div class="table-header">
-            <div class="table-title">Staff Records</div>
-            <div class="table-actions">
-                <button onclick="openHelpModal()" title="Help"><i class="fas fa-question-circle"></i></button>
-            </div>
+            <div style="font-weight:bold;">Employee Directory & Follow-ups</div>
+            <div style="font-size:12px; color:var(--cc-text-muted);" id="tableCount">Showing 0 employees</div>
+        </div>
+        <div class="loading" id="tableLoading">
+            <div class="spinner"></div>
+            <p>Loading data...</p>
         </div>
         <div class="table-scroll">
             <table>
                 <thead>
                     <tr>
-                        <th>Status</th>
-                        <th>ID</th>
+                        <th style="width: 60px;">Sts</th>
+                        <th style="width: 80px;">ID</th>
                         <th>Name</th>
-                        <th>Nationality</th>
-                        <th>Joining Date</th>
-                        <th>Passport Exp.</th>
-                        <th>Medical Exp.</th>
+                        <th>Next Step / Follow Up</th>
                         <th>Branch</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
+                        <th style="width: 180px;">Expiry Alerts (Passport/Visa)</th>
+                        <th>Status</th>
+                        <th style="width: 120px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="employeeTableBody">
-                    <!-- JS Data -->
+                    <!-- Data will be loaded here -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- 1. BRANCH DASHBOARD MODAL -->
-    <div id="branchModal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3>Manage Branches</h3>
-                <button class="action-btn" onclick="closeModal('branchModal')" style="color: #666; font-size: 18px;">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Add New Branch</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="newBranchName" placeholder="Enter branch name..." onkeypress="if(event.key==='Enter') addNewBranch()">
-                        <button class="btn-add" onclick="addNewBranch()">Add</button>
-                    </div>
-                </div>
-                
-                <h4 style="margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Staff Distribution</h4>
-                <div class="branch-stats-grid" id="branchStatsGrid">
-                    <!-- JS Will Populate Stats Here -->
-                </div>
-
-                <h4 style="margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Existing Branches</h4>
-                <ul id="branchListDisplay" class="branch-list-ul"></ul>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-reset" onclick="closeModal('branchModal')">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. QUICK ADD MODAL -->
-    <div id="quickAddModal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3>⚡ Quick Add Staff</h3>
-                <button class="action-btn" onclick="closeModal('quickAddModal')" style="color: #666; font-size: 18px;">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div class="form-group">
-                        <label>ID <span style="color:red">*</span></label>
-                        <input type="text" id="qkId" placeholder="e.g. STF100">
-                    </div>
-                    <div class="form-group">
-                        <label>Name <span style="color:red">*</span></label>
-                        <input type="text" id="qkName" placeholder="Full Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Branch <span style="color:red">*</span></label>
-                        <select id="qkBranch"><option value="">-- Select Branch --</option></select>
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Initial Notes</label>
-                        <input type="text" id="qkNotes" placeholder="e.g. 'resign' or specific instructions">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-reset" onclick="closeModal('quickAddModal')">Cancel</button>
-                <button class="btn-add" onclick="saveQuickAdd()">💾 Save</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. FULL ADD/EDIT MODAL -->
+    <!-- MAIN MODAL: ADD/EDIT -->
     <div id="staffModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Add New Staff</h3>
-                <button class="action-btn" onclick="closeModal('staffModal')" style="color: #666; font-size: 18px;">✕</button>
+                <h3 id="modalTitle" style="margin:0;">Staff Details</h3>
+                <button class="action-btn" onclick="closeModal('staffModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="staffForm">
+                <form id="staffForm" onsubmit="event.preventDefault(); saveStaff();">
                     <input type="hidden" id="editId">
+                    
                     <div class="form-grid">
-                        <div class="divider">Basic Information</div>
-                        <div class="form-group">
-                            <label>Employee ID</label>
-                            <input type="text" id="inpId" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" id="inpName" required>
-                        </div>
+                        <!-- 1. BASIC INFO -->
+                        <div class="form-section-title" style="border-top:none; margin-top:0; color:var(--cc-black);">1. Basic Information</div>
+                        
                         <div class="form-group">
                             <label>Staff Type</label>
-                            <select id="inpStaffType">
-                                <option value="new">New Staff</option>
+                            <select id="inpStaffType" onchange="toggleFieldsByType()">
+                                <option value="new">New Staff (Onboarding)</option>
                                 <option value="existing">Existing Staff</option>
                             </select>
                         </div>
+                        
+                        <div class="form-group required">
+                            <label>Employee ID</label>
+                            <input type="text" id="inpId" required>
+                        </div>
+                        
+                        <div class="form-group required">
+                            <label>Full Name</label>
+                            <input type="text" id="inpName" required>
+                        </div>
+                        
                         <div class="form-group">
                             <label>Nationality</label>
                             <select id="inpNationality">
                                 <option value="">Select...</option>
-                                <option value="JORDANIAN">JORDANIAN</option>
-                                <option value="PHILIPPINES">PHILIPPINES</option>
-                                <option value="INDIAN">INDIAN</option>
-                                <option value="SRILANKA">SRILANKA</option>
-                                <option value="NEPAL">NEPAL</option>
-                                <option value="BANGLADESH">BANGLADESH</option>
-                                <option value="CAMEROON">CAMEROON</option>
-                                <option value="EGYPT">EGYPT</option>
-                                <option value="PAKISTAN">PAKISTAN</option>
-                                <option value="SYRIA">SYRIA</option>
-                                <option value="MYANMAR">MYANMAR</option>
-                                <option value="FILIPINO">FILIPINO</option>
+                                <option value="Egyptian">Egyptian</option>
+                                <option value="Bangladeshi">Bangladeshi</option>
+                                <option value="Ugandan">Ugandan</option>
+                                <option value="Myanmar">Myanmar</option>
+                                <option value="Indian">Indian</option>
+                                <option value="Nepalese">Nepalese</option>
+                                <option value="Filipino">Filipino</option>
+                                <option value="Jordanian">Jordanian</option>
+                                <option value="Syrian">Syrian</option>
                             </select>
                         </div>
+                        
                         <div class="form-group">
-                            <label>Gender</label>
-                            <select id="inpGender"><option value="Male">Male</option><option value="Female">Female</option></select>
+                            <label>Designation</label>
+                            <input type="text" id="inpDesignation" placeholder="e.g., Restaurant Staff">
                         </div>
+                        
                         <div class="form-group">
                             <label>Branch</label>
-                            <select id="inpBranch" required><option value="">-- Select Branch --</option></select>
+                            <select id="inpBranch">
+                                <option value="">Select Branch</option>
+                                <option value="CC Hamdan St">CC Hamdan St</option>
+                                <option value="CC Khaldia">CC Khaldia</option>
+                                <option value="CC Muroor">CC Muroor</option>
+                                <option value="CC Shabiya 11">CC Shabiya 11</option>
+                                <option value="CC Electria">CC Electria</option>
+                                <option value="CC Al Barsha">CC Al Barsha</option>
+                                <option value="CC Al Satwa">CC Al Satwa</option>
+                                <option value="CC Al Rgga">CC Al Rgga</option>
+                                <option value="CC Sharja">CC Sharja</option>
+                                <option value="CC Head Office">CC Head Office</option>
+                                <option value="CC Commissary">CC Commissary</option>
+                            </select>
                         </div>
+                        
                         <div class="form-group">
-                            <label>Joining Date</label>
-                            <input type="date" id="inpJoiningDate">
+                            <label>Hire Approval Date</label>
+                            <input type="date" id="inpHireDate">
                         </div>
-                        <div class="form-group">
-                            <label>ID Number</label>
-                            <input type="text" id="inpIdNumber">
+                        
+                        <!-- New Staff Sections -->
+                        <div id="newStaffSections">
+                            <!-- 2. ENTRY & VISA -->
+                            <div class="form-section-title">2. Entry & Pre-Joining (UAE)</div>
+                            <div class="form-group"><label>Entry Permit Issued</label><input type="date" id="inpEntryIssued"></div>
+                            <div class="form-group"><label>Entry Permit Expiry</label><input type="date" id="inpEntryExp"></div>
+                            <div class="form-group"><label>Date of Entry</label><input type="date" id="inpDateEntry"></div>
+                            <div class="form-group"><label>Visit Visa Expiry</label><input type="date" id="inpVisitVisaExp"></div>
+
+                            <!-- 3. IMMIGRATION -->
+                            <div class="form-section-title">3. Immigration & Labour</div>
+                            <div class="form-group"><label>MOHRE Offer Issued</label><input type="date" id="inpMohreOffer"></div>
+                            <div class="form-group"><label>Offer Signed</label><input type="date" id="inpOfferSigned"></div>
+                            <div class="form-group"><label>Status Amdt Submitted</label><input type="date" id="inpStatusSub"></div>
+                            <div class="form-group"><label>Status Amdt Approved</label><input type="date" id="inpStatusApp"></div>
+                            <div class="form-group"><label>Cancellation Expiry</label><input type="date" id="inpCancelExp"></div>
+
+                            <!-- 4. MEDICAL & EID -->
+                            <div class="form-section-title">4. Medical & Emirates ID</div>
+                            <div class="form-group"><label>Medical Scheduled</label><input type="date" id="inpMedSch"></div>
+                            <div class="form-group"><label>Medical Completed</label><input type="date" id="inpMedComp"></div>
+                            <div class="form-group"><label>Medical Result Issued</label><input type="date" id="inpMedResult"></div>
+                            <div class="form-group"><label>EID Biometrics</label><input type="date" id="inpEidBio"></div>
+                            <div class="form-group"><label>EID Received</label><input type="date" id="inpEidRec"></div>
+
+                            <!-- 5. RESIDENCY VISA -->
+                            <div class="form-section-title">5. Residency Visa</div>
+                            <div class="form-group"><label>Visa App Date</label><input type="date" id="inpVisaApp"></div>
+                            <div class="form-group"><label>Visa Issued Date</label><input type="date" id="inpVisaIssued"></div>
+                            <div class="form-group"><label>Visa Expiry</label><input type="date" id="inpVisaExp"></div>
+                            
+                            <!-- 6. ONBOARDING -->
+                            <div class="form-section-title">6. Company On-Boarding</div>
+                            <div class="form-group"><label>IT Setup</label>
+                                <select id="inpItSetup"><option value="">Pending</option><option value="Done">Done</option></select>
+                            </div>
+                            <div class="form-group"><label>Admin Setup</label>
+                                <select id="inpAdminSetup"><option value="">Pending</option><option value="Done">Done</option></select>
+                            </div>
+                            <div class="form-group"><label>Orientation</label>
+                                <select id="inpOrientation"><option value="">Pending</option><option value="Done">Done</option></select>
+                            </div>
+                            <div class="form-group"><label>Branch Start Date</label><input type="date" id="inpBranchStart"></div>
                         </div>
 
-                        <div class="divider">Documents</div>
-                        <div class="form-group">
-                            <label>Photos (0-5)</label>
-                            <input type="number" id="inpPhotos" min="0" max="5" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label>CV Received?</label>
-                            <select id="inpCV"><option value="false">No</option><option value="true">Yes</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Offer Letter?</label>
-                            <select id="inpOffer"><option value="false">No</option><option value="true">Yes</option></select>
-                        </div>
-
-                        <div class="divider">Passport & Medical</div>
-                        <div class="form-group">
-                            <label>Passport Received?</label>
-                            <select id="inpPassport"><option value="false">No</option><option value="true">Yes</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Passport Expiry</label>
-                            <input type="date" id="inpPassExp">
-                        </div>
-                        <div class="form-group">
-                            <label>Medical Expiry</label>
-                            <input type="date" id="inpMedicalExp">
-                        </div>
-                        <div class="form-group">
-                            <label>ID/Visa Expiry</label>
-                            <input type="date" id="inpIdVisaExp">
-                        </div>
-                        <div class="form-group">
-                            <label>Tip Center Sent?</label>
-                            <select id="inpTipCenter"><option value="false">No</option><option value="true">Yes</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Notes</label>
-                            <input type="text" id="inpNotes" placeholder="Type 'resign' for status...">
+                        <!-- Existing Staff Sections -->
+                        <div id="existingStaffSections" style="display: none;">
+                            <!-- 7. EXISTING STAFF MAINTENANCE -->
+                            <div class="form-section-title">7. Ongoing Maintenance</div>
+                            <div class="form-group"><label>Passport No</label><input type="text" id="inpPassportNo"></div>
+                            <div class="form-group"><label>Passport Expiry</label><input type="date" id="inpPassportExp"></div>
+                            <div class="form-group"><label>Medical Insurance Expiry</label><input type="date" id="inpMedExpMain"></div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-print-id" onclick="printCurrentModalView()">🖨️ Print Status</button>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-reset" onclick="closeModal('staffModal')">Cancel</button>
-                    <button class="btn-add" onclick="saveStaff()">💾 Save Staff</button>
+                <button class="btn-reset" style="background:#999;" onclick="closeModal('staffModal')">Cancel</button>
+                <button class="btn-add" onclick="saveStaff()"><i class="fas fa-save"></i> Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS MODAL -->
+    <div id="notificationsModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 style="margin:0;">📢 Notifications & Alerts</h3>
+                <button class="action-btn" onclick="closeModal('notificationsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="notificationsList">
+                    <!-- Notifications will be loaded here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Notification Panel -->
-    <div class="notification-panel" id="notificationPanel">
-        <div class="notification-header">
-            <span>Expiring Documents</span>
-            <button class="action-btn" onclick="toggleNotifications()" style="color: white;"><i class="fas fa-times"></i></button>
+    <!-- Hidden Print Area for Professional Report -->
+    <div id="printArea">
+        <div class="report-header">
+            <div class="report-logo">👨‍🍳</div>
+            <div class="report-title">
+                <h2>EMPLOYEE COMPLIANCE FILE</h2>
+                <p>CRISPY CHICKEN HR DEPARTMENT</p>
+                <p style="font-size: 12px; margin-top: 2px;">Generated on: <span id="printDate"></span></p>
+            </div>
         </div>
-        <div class="notification-list" id="notificationList"></div>
+
+        <div class="report-section">
+            <h3>1. Employee Details</h3>
+            <table class="report-table">
+                <tr><th>Name:</th><td id="prName"></td><th>ID:</th><td id="prId"></td></tr>
+                <tr><th>Designation:</th><td id="prDesignation"></td><th>Branch:</th><td id="prBranch"></td></tr>
+                <tr><th>Status:</th><td id="prStatus"></td><th>Current Stage:</th><td id="prStage"></td></tr>
+            </table>
+        </div>
+
+        <div class="report-section">
+            <h3>2. Onboarding & Compliance Check</h3>
+            <table class="report-table">
+                <tr><th>Entry Permit</th><td id="prEntry"></td><th>Medical</th><td id="prMedical"></td></tr>
+                <tr><th>Emirates ID</th><td id="prEID"></td><th>Visa Stamping</th><td id="prVisa"></td></tr>
+                <tr><th>Passport Exp.</th><td id="prPassExp"></td><th>Visa Exp.</th><td id="prVisaExp"></td></tr>
+            </table>
+        </div>
+
+        <div class="report-section">
+            <h3>3. Actions Taken</h3>
+            <ul id="prActions" style="font-size:13px; line-height: 1.6;"></ul>
+        </div>
+
+        <div style="text-align:center;">
+            <div id="prStamp" class="status-stamp" style="display:none;">READY TO JOIN</div>
+        </div>
+
+        <div class="signature-area">
+            <div class="sign-box">HR Manager Signature</div>
+            <div class="sign-box">Manager Signature</div>
+        </div>
     </div>
 
-    <!-- Hidden Print Area -->
-    <div id="printArea" style="display:none;"></div>
-    <div id="toast" class="toast">Operation Successful</div>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Saved Successfully</span>
+    </div>
 
     <script>
-        // --- CONFIG ---
-        const STORAGE_KEY_EMP = 'cc_employees_v3';
-        const STORAGE_KEY_BR = 'cc_branches_v3';
-        const STORAGE_KEY_THEME = 'cc_theme';
-        
+        // ====================== CONFIGURATION ======================
+        const STORAGE_KEY = 'crispy_chicken_hr_system_v1.0';
         let employees = [];
-        let branches = ["CC Hamdan St", "CC Khaldia", "CC Muroor", "CC Shabiya 11", "CC Head Office"];
-        let notifications = [];
+        let filteredEmployees = [];
 
-        // --- INIT ---
-        window.addEventListener('DOMContentLoaded', () => {
+        // ====================== INITIALIZATION ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Crispy Chicken HR System Initializing...');
+            
+            // Load theme preference
+            const savedTheme = localStorage.getItem('cc_hr_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Load data
             loadData();
-            checkExpiringDocuments();
+            
+            // Set today's date in form
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inpHireDate').value = today;
+            
+            // Set maximum dates to today for date inputs
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                input.max = today;
+            });
+            
+            console.log('✅ System initialized successfully');
         });
 
+        // ====================== DATA MANAGEMENT ======================
         function loadData() {
-            try {
-                const storedEmp = localStorage.getItem(STORAGE_KEY_EMP);
-                const storedBr = localStorage.getItem(STORAGE_KEY_BR);
-                if (storedEmp) employees = JSON.parse(storedEmp);
-                if (storedBr) branches = JSON.parse(storedBr);
-                updateUI();
-            } catch(e) {
-                console.error("Data Load Error", e);
+            console.log('📂 Loading data from localStorage...');
+            const stored = localStorage.getItem(STORAGE_KEY);
+            
+            if (stored) {
+                try {
+                    employees = JSON.parse(stored);
+                    console.log(`✅ Loaded ${employees.length} employee(s)`);
+                } catch (error) {
+                    console.error('❌ Error parsing data:', error);
+                    employees = [];
+                }
             }
+            
+            // If no data exists, create sample data
+            if (employees.length === 0) {
+                console.log('📝 Creating sample data...');
+                employees = getSampleData();
+                saveData();
+            }
+            
+            updateUI();
+        }
+
+        function getSampleData() {
+            return [
+                {
+                    id: "CC001",
+                    name: "Mohamed Ahmed",
+                    staffType: "existing",
+                    nationality: "Egyptian",
+                    designation: "Restaurant Manager",
+                    branch: "CC Hamdan St",
+                    hireDate: "2023-01-15",
+                    passportExp: "2025-06-30",
+                    visaExp: "2024-12-31",
+                    medExpMain: "2024-12-31",
+                    lastUpdated: new Date().toISOString()
+                },
+                {
+                    id: "CC002",
+                    name: "Fatima Khan",
+                    staffType: "new",
+                    nationality: "Bangladeshi",
+                    designation: "Cashier",
+                    branch: "CC Khaldia",
+                    hireDate: "2024-02-01",
+                    entryIssued: "2024-02-05",
+                    dateEntry: "2024-02-10",
+                    mohreOffer: "2024-02-15",
+                    medResult: "2024-02-20",
+                    itSetup: "Done",
+                    adminSetup: "Done",
+                    lastUpdated: new Date().toISOString()
+                },
+                {
+                    id: "CC003",
+                    name: "John Smith",
+                    staffType: "existing",
+                    nationality: "Indian",
+                    designation: "Chef",
+                    branch: "CC Muroor",
+                    hireDate: "2023-03-10",
+                    passportExp: "2024-03-01", // Expiring soon
+                    visaExp: "2024-06-15",
+                    medExpMain: "2024-05-20",
+                    lastUpdated: new Date().toISOString()
+                }
+            ];
         }
 
         function saveData() {
-            localStorage.setItem(STORAGE_KEY_EMP, JSON.stringify(employees));
-            localStorage.setItem(STORAGE_KEY_BR, JSON.stringify(branches));
-            document.getElementById('lastSavedTime').innerText = new Date().toLocaleTimeString();
+            console.log('💾 Saving data...');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
             updateUI();
+            updateNotifications();
         }
 
-        function resetData() {
-            if(confirm("Reset All Data? Cannot be undone.")) {
-                localStorage.removeItem(STORAGE_KEY_EMP);
-                localStorage.removeItem(STORAGE_KEY_BR);
-                location.reload();
-            }
-        }
-
-        // --- STATUS LOGIC ---
-        function getEmployeeStatus(emp) {
-            // 1. Resigned
-            if (emp.notes && emp.notes.toLowerCase().includes('resign')) {
-                return { label: "Resigned", class: "status-resigned", isReady: false, icon: "🔴" };
-            }
-            // 2. Existing Staff
-            if (emp.staffType === 'existing') {
-                if (isAnyExpired(emp)) return { label: "Expired", class: "status-expired", isReady: false, icon: "🔴" };
-                if (isAnyExpiringSoon(emp)) return { label: "Expiring", class: "status-expiring", isReady: true, icon: "🟡" };
-                return { label: "Working Fine", class: "status-working", isReady: true, icon: "🟢" };
-            }
-            // 3. New Staff Logic
-            const docsMissing = !emp.passport || !emp.cv || !emp.offerLetter || emp.photos < 5;
-            if (docsMissing) return { label: "Missing Docs", class: "status-missing", isReady: false, icon: "🔴" };
+        // ====================== BUSINESS LOGIC ======================
+        function getExpiryStatus(dateStr) {
+            if (!dateStr) return { label: '-', class: '', warning: false, urgent: false, daysLeft: null };
             
-            if (isAnyExpired(emp)) return { label: "Expired", class: "status-expired", isReady: false, icon: "🔴" };
-            if (isAnyExpiringSoon(emp)) return { label: "Expiring", class: "status-expiring", isReady: true, icon: "🟡" };
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const target = new Date(dateStr);
+            target.setHours(0, 0, 0, 0);
             
-            return { label: "Working Fine", class: "status-working", isReady: true, icon: "🟢" };
+            const diffTime = target - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) return { label: 'EXPIRED', class: 'date-expired', warning: false, urgent: true, daysLeft: 0 };
+            if (diffDays <= 15) return { label: `${diffDays} Days Left`, class: 'date-warning', warning: true, urgent: false, daysLeft: diffDays };
+            return { label: `${diffDays} Days`, class: '', warning: false, urgent: false, daysLeft: diffDays };
         }
 
-        function isAnyExpiringSoon(emp) {
-            const today = new Date(); today.setHours(0,0,0,0);
-            const check = (d) => {
-                if(!d) return false;
-                const diff = Math.ceil((new Date(d) - today) / (1000 * 60 * 60 * 24));
-                return diff > 0 && diff <= 30;
+        function getNextStep(emp) {
+            if (emp.staffType !== 'new') return null;
+
+            if (!emp.hireDate) return "Approve Hire Date";
+            if (!emp.entryIssued) return "Issue Entry Permit";
+            if (!emp.dateEntry) return "Record Entry Date";
+            if (!emp.medResult) return "Schedule Medical / Get Result";
+            if (!emp.eidRec) return "Wait for EID Delivery";
+            if (!emp.visaIssued) return "Stamping Visa";
+            if (!emp.branchStartDate) return "Send to Restaurant (Handover)";
+            
+            return "Ready for Handover";
+        }
+
+        function getOverallStatus(emp) {
+            if (emp.staffType === 'new') {
+                const step = getNextStep(emp);
+                if (step === "Ready for Handover") return { 
+                    label: "✅ Ready", 
+                    class: "status-ok", 
+                    color: "#10b981",
+                    category: "ready"
+                };
+                return { 
+                    label: "⚙️ In Process", 
+                    class: "status-process", 
+                    color: "#3b82f6",
+                    category: "process"
+                };
+            }
+
+            const pass = getExpiryStatus(emp.passportExp);
+            const visa = getExpiryStatus(emp.visaExp);
+            const med = getExpiryStatus(emp.medExpMain);
+
+            if (pass.urgent || visa.urgent || med.urgent) return { 
+                label: "🔴 Expired", 
+                class: "status-expired", 
+                color: "#dc3545",
+                category: "expired"
             };
-            return check(emp.passportExpiry) || check(emp.medicalExpiry) || check(emp.idVisaExpiry);
+            if (pass.warning || visa.warning || med.warning) return { 
+                label: "🟠 Expiring Soon", 
+                class: "status-warning", 
+                color: "#f59e0b",
+                category: "warning"
+            };
+            return { 
+                label: "✅ Active", 
+                class: "status-ok", 
+                color: "#10b981",
+                category: "active"
+            };
         }
 
-        function isAnyExpired(emp) {
-            const today = new Date(); today.setHours(0,0,0,0);
-            const check = (d) => d ? new Date(d) <= today : false;
-            return check(emp.passportExpiry) || check(emp.medicalExpiry) || check(emp.idVisaExpiry);
-        }
-
-        // --- UI UPDATES ---
+        // ====================== UI RENDERING ======================
         function updateUI() {
-            renderBranches();
-            renderTable(employees);
-            updateDashboard(employees);
-        }
-
-        function updateDashboard(data) {
-            let working = 0, expiring = 0, issues = 0;
-            data.forEach(emp => {
-                const s = getEmployeeStatus(emp);
-                if (s.class === 'status-working') working++;
-                else if (s.class === 'status-expiring') expiring++;
-                else if (s.class === 'status-expired' || s.class === 'status-missing' || s.class === 'status-resigned') issues++;
-            });
-            document.getElementById('totalCount').innerText = data.length;
-            document.getElementById('workingCount').innerText = working;
-            document.getElementById('expiringCount').innerText = expiring;
-            document.getElementById('issueCount').innerText = issues;
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('employeeTableBody');
-            tbody.innerHTML = ''; 
-            data.forEach(emp => {
-                const status = getEmployeeStatus(emp);
-                const row = document.createElement('tr');
-                if (emp.staffType === 'new') row.className = 'new-staff';
-                
-                row.innerHTML = `
-                    <td><span class="badge ${status.class}">${status.icon} ${status.label}</span></td>
-                    <td><strong>${emp.id}</strong></td>
-                    <td>${emp.name}</td>
-                    <td>${emp.nationality || '-'}</td>
-                    <td>${emp.joiningDate || '-'}</td>
-                    <td>${emp.passportExpiry || '-'}</td>
-                    <td>${emp.medicalExpiry || '-'}</td>
-                    <td>${emp.branch || '-'}</td>
-                    <td style="font-size:11px; max-width:100px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${emp.notes || ''}</td>
-                    <td>
-                        <button class="action-btn btn-edit" onclick="editEmployee('${emp.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn btn-del" onclick="deleteEmployee('${emp.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function filterData() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const branchFilter = document.getElementById('branchFilter').value;
+            console.log('🔄 Updating UI...');
             
-            const filtered = employees.filter(emp => {
-                const matchesSearch = !query || emp.id.toLowerCase().includes(query) || emp.name.toLowerCase().includes(query);
-                const matchesBranch = !branchFilter || emp.branch === branchFilter;
+            const tbody = document.getElementById('employeeTableBody');
+            const tableCount = document.getElementById('tableCount');
+            const loading = document.getElementById('tableLoading');
+            
+            // Show loading
+            loading.style.display = 'block';
+            tbody.innerHTML = '';
+            
+            // Apply filters
+            filterData();
+            
+            setTimeout(() => {
+                loading.style.display = 'none';
                 
-                const s = getEmployeeStatus(emp);
-                let matchesStatus = true;
-                if(statusFilter) {
-                    if(statusFilter === 'working') matchesStatus = (s.class === 'status-working');
-                    else if(statusFilter === 'expiring') matchesStatus = (s.class === 'status-expiring');
-                    else if(statusFilter === 'expired') matchesStatus = (s.class === 'status-expired');
-                    else if(statusFilter === 'missing') matchesStatus = (s.class === 'status-missing');
-                    else if(statusFilter === 'resigned') matchesStatus = (s.class === 'status-resigned');
+                if (filteredEmployees.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <h3>No employees found</h3>
+                                    <p>Add your first employee using the "Add Staff" button</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tableCount.textContent = `Showing 0 employees`;
+                    return;
                 }
                 
-                return matchesSearch && matchesBranch && matchesStatus;
-            });
+                let countNew = 0, countActive = 0, countAlert = 0;
+                let notificationCount = 0;
+
+                filteredEmployees.forEach(emp => {
+                    const status = getOverallStatus(emp);
+                    const nextStep = getNextStep(emp);
+                    
+                    if (emp.staffType === 'new') countNew++;
+                    if (status.category === 'active' || status.category === 'ready') countActive++;
+                    if (status.category === 'warning' || status.category === 'expired') {
+                        countAlert++;
+                        notificationCount++;
+                    }
+                    
+                    if (emp.staffType === 'new' && status.category === 'process') {
+                        notificationCount++;
+                    }
+
+                    const tr = document.createElement('tr');
+                    if (status.category === 'warning' || status.category === 'expired') {
+                        tr.className = 'alert-row';
+                    } else if (emp.staffType === 'new') {
+                        tr.className = 'new-staff-row';
+                    }
+
+                    let expiryHTML = `<span style="color:#aaa;">-</span>`;
+                    if (emp.staffType === 'existing') {
+                        const pass = getExpiryStatus(emp.passportExp);
+                        const visa = getExpiryStatus(emp.visaExp);
+                        expiryHTML = `
+                            <div><small>Pass:</small> <span class="${pass.class}">${pass.label}</span></div>
+                            <div style="margin-top:2px;"><small>Visa:</small> <span class="${visa.class}">${visa.label}</span></div>
+                        `;
+                    }
+
+                    const stepHTML = emp.staffType === 'new' 
+                        ? `<span class="next-step-badge" title="${nextStep}">${nextStep}</span>` 
+                        : `<span class="next-step-badge" style="border-left-color:#ccc">Routine Monitoring</span>`;
+
+                    tr.innerHTML = `
+                        <td><span class="badge ${status.class}">${emp.staffType === 'new' ? 'NEW' : 'EXS'}</span></td>
+                        <td><strong>${emp.id}</strong></td>
+                        <td>
+                            <div style="font-weight: 600;">${emp.name}</div>
+                            <small style="color:#888">${emp.designation || ''} • ${emp.nationality || ''}</small>
+                        </td>
+                        <td>${stepHTML}</td>
+                        <td>${emp.branch}</td>
+                        <td>${expiryHTML}</td>
+                        <td><span style="font-weight:bold; color:${status.color}">${status.label}</span></td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editEmployee('${emp.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn btn-print" onclick="printReport('${emp.id}')" title="Print Report"><i class="fas fa-print"></i></button>
+                            <button class="action-btn btn-del" onclick="deleteEmployee('${emp.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Update counters
+                document.getElementById('totalCount').innerText = employees.length;
+                document.getElementById('newCount').innerText = countNew;
+                document.getElementById('activeCount').innerText = countActive;
+                document.getElementById('alertCount').innerText = countAlert;
+                tableCount.textContent = `Showing ${filteredEmployees.length} of ${employees.length} employees`;
+
+                // Update notification badge
+                const badge = document.getElementById('notifCount');
+                if (notificationCount > 0) {
+                    badge.style.display = 'block';
+                    badge.innerText = notificationCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+                
+                console.log('✅ UI updated successfully');
+            }, 300);
+        }
+
+        // ====================== FILTERING ======================
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
             
-            renderTable(filtered);
-        }
-
-        // --- BRANCH MANAGEMENT ---
-        function renderBranches() {
-            ['qkBranch', 'inpBranch', 'branchFilter'].forEach(id => {
-                const sel = document.getElementById(id);
-                const isFilter = id === 'branchFilter';
-                sel.innerHTML = isFilter ? '<option value="">All Branches</option>' : '<option value="">-- Select Branch --</option>';
-                branches.sort().forEach(b => { sel.innerHTML += `<option value="${b}">${b}</option>`; });
-            });
-
-            const list = document.getElementById('branchListDisplay');
-            list.innerHTML = '';
-            branches.sort().forEach(b => {
-                list.innerHTML += `<li>${b} <button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteBranch('${b}')">x</button></li>`;
-            });
-
-            const grid = document.getElementById('branchStatsGrid');
-            grid.innerHTML = '';
-            branches.forEach(b => {
-                const count = employees.filter(e => e.branch === b).length;
-                grid.innerHTML += `
-                    <div class="branch-stat-box">
-                        <span class="branch-stat-count">${count}</span>
-                        <span class="branch-stat-name">${b}</span>
-                    </div>`;
+            filteredEmployees = employees.filter(emp => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    emp.id.toLowerCase().includes(searchTerm) || 
+                    emp.name.toLowerCase().includes(searchTerm) ||
+                    (emp.designation && emp.designation.toLowerCase().includes(searchTerm)) ||
+                    (emp.branch && emp.branch.toLowerCase().includes(searchTerm));
+                
+                // Type filter
+                let matchesType = true;
+                if (typeFilter === 'new') {
+                    matchesType = emp.staffType === 'new';
+                } else if (typeFilter === 'existing') {
+                    matchesType = emp.staffType === 'existing';
+                } else if (typeFilter === 'alert') {
+                    const status = getOverallStatus(emp);
+                    matchesType = status.category === 'warning' || status.category === 'expired' || 
+                                 (emp.staffType === 'new' && status.category === 'process');
+                }
+                
+                return matchesSearch && matchesType;
             });
         }
 
-        function openBranchModal() {
-            updateUI();
-            document.getElementById('branchModal').classList.add('open');
-        }
-        function addNewBranch() {
-            const input = document.getElementById('newBranchName');
-            const name = input.value.trim();
-            if(name && !branches.includes(name)) { branches.push(name); saveData(); input.value = ''; }
-        }
-        function deleteBranch(name) {
-            if(confirm(`Delete ${name}?`)) { branches = branches.filter(b => b !== name); saveData(); }
-        }
-
-        // --- SAVE / ADD STAFF ---
+        // ====================== MODAL MANAGEMENT ======================
         function openAddModal() {
+            console.log('➕ Opening add modal...');
+            
+            // Reset form
             document.getElementById('staffForm').reset();
             document.getElementById('editId').value = "";
-            document.getElementById('modalTitle').innerText = "Add New Staff Member";
-            document.getElementById('staffModal').classList.add('open');
+            
+            // Set modal title
+            document.getElementById('modalTitle').innerText = "Add New Staff";
+            
+            // Set default values
+            document.getElementById('inpStaffType').value = "new";
+            toggleFieldsByType();
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inpHireDate').value = today;
+            
+            // Generate ID
+            const lastNum = employees.length > 0 ? 
+                Math.max(...employees.map(e => {
+                    const match = e.id.match(/\d+/);
+                    return match ? parseInt(match[0]) : 0;
+                })) : 0;
+            const newId = `CC${String(lastNum + 1).padStart(3, '0')}`;
+            document.getElementById('inpId').value = newId;
+            
+            // Open modal
+            openModal('staffModal');
+            
+            // Focus on name field
+            setTimeout(() => {
+                document.getElementById('inpName').focus();
+            }, 100);
         }
+
         function editEmployee(id) {
+            console.log(`✏️ Editing employee: ${id}`);
             const emp = employees.find(e => e.id === id);
-            if(!emp) return;
-
-            document.getElementById('editId').value = emp.id;
-            document.getElementById('modalTitle').innerText = `Edit: ${emp.name}`;
-            document.getElementById('staffModal').classList.add('open');
+            if (!emp) {
+                showToast('Employee not found', 'error');
+                return;
+            }
             
-            // Fill Form
-            ['inpId', 'inpName', 'inpNationality', 'inpBranch', 'inpJoiningDate', 'inpIdNumber', 'inpPassExp', 'inpMedicalExp', 'inpIdVisaExp', 'inpNotes'].forEach(k => document.getElementById(k).value = emp[k.replace('Nationality', 'Nationality').replace('PassportExp', 'passportExp')] || "");
-            
-            ['inpStaffType', 'inpGender', 'inpPassport', 'inpCV', 'inpOffer', 'inpTipCenter'].forEach(k => document.getElementById(k).value = emp[k.replace('passport','passport')] || "false");
-            
-            document.getElementById('inpPhotos').value = emp.photos || 0;
-        }
-
-        function saveStaff() {
-            const editId = document.getElementById('editId').value;
-            const id = document.getElementById('inpId').value.trim();
-            
-            if(!id || !document.getElementById('inpName').value) { alert("ID and Name are required"); return; }
-
-            const formData = {
-                id, 
-                name: document.getElementById('inpName').value.trim(),
-                staffType: document.getElementById('inpStaffType').value,
-                nationality: document.getElementById('inpNationality').value,
-                gender: document.getElementById('inpGender').value,
-                designation: "",
-                branch: document.getElementById('inpBranch').value,
-                joiningDate: document.getElementById('inpJoiningDate').value,
-                idNumber: document.getElementById('inpIdNumber').value,
-                photos: parseInt(document.getElementById('inpPhotos').value) || 0,
-                cv: document.getElementById('inpCV').value === 'true',
-                offerLetter: document.getElementById('inpOffer').value === 'true',
-                passport: document.getElementById('inpPassport').value === 'true',
-                passportExpiry: document.getElementById('inpPassExp').value,
-                medicalExpiry: document.getElementById('inpMedicalExp').value,
-                idVisaExpiry: document.getElementById('inpIdVisaExp').value,
-                tipCenter: document.getElementById('inpTipCenter').value === 'true',
-                notes: document.getElementById('inpNotes').value
+            // Map all fields
+            const fieldMap = {
+                'inpStaffType': 'staffType',
+                'inpId': 'id',
+                'inpName': 'name',
+                'inpNationality': 'nationality',
+                'inpDesignation': 'designation',
+                'inpBranch': 'branch',
+                'inpHireDate': 'hireDate',
+                'inpEntryIssued': 'entryIssued',
+                'inpEntryExp': 'entryExp',
+                'inpDateEntry': 'dateEntry',
+                'inpVisitVisaExp': 'visitVisaExp',
+                'inpMohreOffer': 'mohreOffer',
+                'inpOfferSigned': 'offerSigned',
+                'inpStatusSub': 'statusSub',
+                'inpStatusApp': 'statusApp',
+                'inpCancelExp': 'cancelExp',
+                'inpMedSch': 'medSch',
+                'inpMedComp': 'medComp',
+                'inpMedResult': 'medResult',
+                'inpEidBio': 'eidBio',
+                'inpEidRec': 'eidRec',
+                'inpVisaApp': 'visaApp',
+                'inpVisaIssued': 'visaIssued',
+                'inpVisaExp': 'visaExp',
+                'inpItSetup': 'itSetup',
+                'inpAdminSetup': 'adminSetup',
+                'inpOrientation': 'orientation',
+                'inpBranchStart': 'branchStartDate',
+                'inpPassportNo': 'passportNo',
+                'inpPassportExp': 'passportExp',
+                'inpMedExpMain': 'medExpMain'
             };
 
-            if(editId) {
-                const idx = employees.findIndex(e => e.id === editId);
-                if(idx !== -1) employees[idx] = formData;
-            } else {
-                if(employees.some(e => e.id === id)) { alert("ID Exists"); return; }
-                employees.unshift(formData);
+            for (const [inputId, field] of Object.entries(fieldMap)) {
+                const element = document.getElementById(inputId);
+                if (element) {
+                    element.value = emp[field] || "";
+                }
             }
+            
+            document.getElementById('editId').value = emp.id;
+            document.getElementById('modalTitle').innerText = `Edit Staff: ${emp.name}`;
+            toggleFieldsByType();
+            openModal('staffModal');
+        }
 
+        function toggleFieldsByType() {
+            const staffType = document.getElementById('inpStaffType').value;
+            const newSections = document.getElementById('newStaffSections');
+            const existingSections = document.getElementById('existingStaffSections');
+            
+            if (staffType === 'new') {
+                newSections.style.display = 'block';
+                existingSections.style.display = 'none';
+            } else {
+                newSections.style.display = 'none';
+                existingSections.style.display = 'block';
+            }
+        }
+
+        // ====================== SAVE FUNCTION (FIXED) ======================
+        function saveStaff() {
+            console.log('💾 Saving staff data...');
+            
+            // Get form values
+            const editId = document.getElementById('editId').value;
+            const id = document.getElementById('inpId').value.trim();
+            const name = document.getElementById('inpName').value.trim();
+            
+            // Validation
+            if (!id) {
+                showToast('Employee ID is required', 'error');
+                document.getElementById('inpId').focus();
+                return;
+            }
+            
+            if (!name) {
+                showToast('Employee name is required', 'error');
+                document.getElementById('inpName').focus();
+                return;
+            }
+            
+            // Check for duplicate ID (only for new records)
+            if (!editId) {
+                const duplicate = employees.find(e => e.id === id);
+                if (duplicate) {
+                    showToast(`Employee ID "${id}" already exists`, 'error');
+                    document.getElementById('inpId').focus();
+                    return;
+                }
+            }
+            
+            // Collect form data
+            const formData = {
+                staffType: document.getElementById('inpStaffType').value,
+                id: id,
+                name: name,
+                nationality: document.getElementById('inpNationality').value,
+                designation: document.getElementById('inpDesignation').value.trim(),
+                branch: document.getElementById('inpBranch').value,
+                hireDate: document.getElementById('inpHireDate').value,
+                entryIssued: document.getElementById('inpEntryIssued').value,
+                entryExp: document.getElementById('inpEntryExp').value,
+                dateEntry: document.getElementById('inpDateEntry').value,
+                visitVisaExp: document.getElementById('inpVisitVisaExp').value,
+                mohreOffer: document.getElementById('inpMohreOffer').value,
+                offerSigned: document.getElementById('inpOfferSigned').value,
+                statusSub: document.getElementById('inpStatusSub').value,
+                statusApp: document.getElementById('inpStatusApp').value,
+                cancelExp: document.getElementById('inpCancelExp').value,
+                medSch: document.getElementById('inpMedSch').value,
+                medComp: document.getElementById('inpMedComp').value,
+                medResult: document.getElementById('inpMedResult').value,
+                eidBio: document.getElementById('inpEidBio').value,
+                eidRec: document.getElementById('inpEidRec').value,
+                visaApp: document.getElementById('inpVisaApp').value,
+                visaIssued: document.getElementById('inpVisaIssued').value,
+                visaExp: document.getElementById('inpVisaExp').value,
+                itSetup: document.getElementById('inpItSetup').value,
+                adminSetup: document.getElementById('inpAdminSetup').value,
+                orientation: document.getElementById('inpOrientation').value,
+                branchStartDate: document.getElementById('inpBranchStart').value,
+                passportNo: document.getElementById('inpPassportNo').value,
+                passportExp: document.getElementById('inpPassportExp').value,
+                medExpMain: document.getElementById('inpMedExpMain').value,
+                lastUpdated: new Date().toISOString()
+            };
+
+            console.log('Form data:', formData);
+            
+            if (editId) {
+                // Update existing employee
+                const index = employees.findIndex(e => e.id === editId);
+                if (index !== -1) {
+                    employees[index] = { ...employees[index], ...formData };
+                    console.log(`✅ Updated employee: ${id}`);
+                } else {
+                    showToast('Employee not found', 'error');
+                    return;
+                }
+            } else {
+                // Add new employee
+                employees.unshift(formData);
+                console.log(`✅ Added new employee: ${id}`);
+            }
+            
+            // Save and update UI
             saveData();
-            document.getElementById('searchInput').value = ''; // Clear Search
-            filterData();
-            document.getElementById('staffModal').classList.remove('open');
-            showToast("Saved Successfully");
+            closeModal('staffModal');
+            showToast(`Employee ${editId ? 'updated' : 'added'} successfully`, 'success');
         }
 
         function deleteEmployee(id) {
-            if(confirm("Delete record?")) {
+            if (confirm(`Are you sure you want to delete employee ${id}? This action cannot be undone.`)) {
+                const originalLength = employees.length;
                 employees = employees.filter(e => e.id !== id);
-                saveData();
-                filterData();
+                
+                if (employees.length < originalLength) {
+                    saveData();
+                    showToast('Employee deleted successfully', 'success');
+                } else {
+                    showToast('Employee not found', 'error');
+                }
             }
         }
 
-        // --- QUICK ADD ---
-        function openQuickAddModal() {
-            document.getElementById('qkId').value = '';
-            document.getElementById('qkName').value = '';
-            document.getElementById('qkNotes').value = '';
-            document.getElementById('quickAddModal').classList.add('open');
-        }
-        function saveQuickAdd() {
-            const id = document.getElementById('qkId').value.trim();
-            const name = document.getElementById('qkName').value.trim();
-            const branch = document.getElementById('qkBranch').value;
-            const notes = document.getElementById('qkNotes').value;
-            
-            if(!id || !name || !branch) { alert("ID, Name, Branch Required"); return; }
-            
-            employees.unshift({
-                id, name, branch, nationality: "", gender: "Male", staffType: "new",
-                joiningDate: new Date().toISOString().split('T')[0], photos: 0, cv: false, 
-                offerLetter: false, passport: false, medicalExpiry: "", idVisaExp: "", 
-                tipCenter: false, notes
+        // ====================== NOTIFICATIONS ======================
+        function updateNotifications() {
+            const today = new Date();
+            const notifications = [];
+            let notificationCount = 0;
+
+            employees.forEach(emp => {
+                const status = getOverallStatus(emp);
+                
+                if (status.category === 'expired') {
+                    notifications.push({
+                        type: 'error',
+                        message: `${emp.name} (${emp.id}) - Documents Expired`,
+                        employeeId: emp.id
+                    });
+                    notificationCount++;
+                } else if (status.category === 'warning') {
+                    const pass = getExpiryStatus(emp.passportExp);
+                    const visa = getExpiryStatus(emp.visaExp);
+                    const med = getExpiryStatus(emp.medExpMain);
+                    
+                    let expiringItem = 'Documents';
+                    if (pass.warning) expiringItem = 'Passport';
+                    else if (visa.warning) expiringItem = 'Visa';
+                    else if (med.warning) expiringItem = 'Medical Insurance';
+                    
+                    notifications.push({
+                        type: 'warning',
+                        message: `${emp.name} (${emp.id}) - ${expiringItem} expiring in ${pass.daysLeft || visa.daysLeft || med.daysLeft} days`,
+                        employeeId: emp.id
+                    });
+                    notificationCount++;
+                } else if (emp.staffType === 'new' && status.category === 'process') {
+                    const nextStep = getNextStep(emp);
+                    notifications.push({
+                        type: 'info',
+                        message: `${emp.name} (${emp.id}) - ${nextStep}`,
+                        employeeId: emp.id
+                    });
+                    notificationCount++;
+                }
             });
-            saveData();
-            closeModal('quickAddModal');
-            showToast("Added");
+
+            // Update notification list
+            const notificationsList = document.getElementById('notificationsList');
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <h3>No alerts</h3>
+                        <p>All employees are up to date</p>
+                    </div>
+                `;
+            } else {
+                let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+                notifications.forEach(notif => {
+                    const icon = notif.type === 'error' ? '🔴' : notif.type === 'warning' ? '🟠' : '🔵';
+                    html += `
+                        <div style="padding: 12px; background: ${notif.type === 'error' ? '#fee' : notif.type === 'warning' ? '#ffd' : '#eef'}; 
+                             border-radius: 6px; border-left: 4px solid ${notif.type === 'error' ? '#dc3545' : notif.type === 'warning' ? '#f59e0b' : '#3b82f6'};">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 18px;">${icon}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; font-size: 13px;">${notif.message}</div>
+                                    <small style="color: #666; font-size: 11px;">
+                                        Click arrow to view
+                                    </small>
+                                </div>
+                                <button class="action-btn btn-edit" onclick="editEmployee('${notif.employeeId}'); closeModal('notificationsModal')">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                notificationsList.innerHTML = html;
+            }
         }
 
-        // --- EXCEL FIX (BOM) ---
-        function exportToCSV() {
-            // Add BOM for Arabic/Excel Support
-            let csvContent = "\uFEFF"; 
-            csvContent += "Status,Icon,ID,Name,Type,Nationality,Branch,Joining Date,Passport Exp,Medical Exp,ID Visa Exp,Notes\n";
+        function showNotifications() {
+            updateNotifications();
+            openModal('notificationsModal');
+        }
+
+        // ====================== REPORT PRINTING ======================
+        function printReport(id) {
+            const emp = employees.find(e => e.id === id);
+            if (!emp) {
+                showToast('Employee not found', 'error');
+                return;
+            }
+
+            // Set report data
+            document.getElementById('printDate').innerText = new Date().toLocaleString();
+            document.getElementById('prName').innerText = emp.name;
+            document.getElementById('prId').innerText = emp.id;
+            document.getElementById('prDesignation').innerText = emp.designation || '-';
+            document.getElementById('prBranch').innerText = emp.branch;
             
-            employees.forEach(e => {
-                const s = getEmployeeStatus(e);
+            const status = getOverallStatus(emp);
+            document.getElementById('prStatus').innerText = status.label;
+            document.getElementById('prStage').innerText = emp.staffType === 'new' ? 'Onboarding' : 'Employed';
+
+            // Set checkmarks
+            const chk = (val) => val ? '✅ ' + formatDate(val) : '❌ Pending';
+            document.getElementById('prEntry').innerText = chk(emp.entryIssued);
+            document.getElementById('prMedical').innerText = chk(emp.medResult);
+            document.getElementById('prEID').innerText = chk(emp.eidRec);
+            document.getElementById('prVisa').innerText = chk(emp.visaIssued);
+            document.getElementById('prPassExp').innerText = emp.passportExp ? formatDate(emp.passportExp) : '-';
+            document.getElementById('prVisaExp').innerText = emp.visaExp ? formatDate(emp.visaExp) : '-';
+
+            // Actions list
+            let actions = '';
+            if (emp.hireDate) actions += `<li>Hire Approved on ${formatDate(emp.hireDate)}</li>`;
+            if (emp.entryIssued) actions += `<li>Entry Permit Issued: ${formatDate(emp.entryIssued)}</li>`;
+            if (emp.dateEntry) actions += `<li>Date of Entry: ${formatDate(emp.dateEntry)}</li>`;
+            if (emp.medResult) actions += `<li>Medical Fit: ${formatDate(emp.medResult)}</li>`;
+            if (emp.eidRec) actions += `<li>EID Received: ${formatDate(emp.eidRec)}</li>`;
+            if (emp.visaIssued) actions += `<li>Residency Visa Stamped: ${formatDate(emp.visaIssued)}</li>`;
+            if (emp.branchStartDate) actions += `<li>Handed over to branch on ${formatDate(emp.branchStartDate)}</li>`;
+            document.getElementById('prActions').innerHTML = actions || '<li>No actions recorded yet.</li>';
+
+            // Show stamp if ready
+            const stamp = document.getElementById('prStamp');
+            stamp.style.display = status.label.includes('Ready') ? 'flex' : 'none';
+
+            // Print after short delay
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
+
+        // ====================== UTILITY FUNCTIONS ======================
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'exclamation-triangle'}"></i>
+                <span>${message}</span>
+            `;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('cc_hr_theme', newTheme);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function exportToCSV() {
+            if (employees.length === 0) {
+                showToast('No data to export', 'warning');
+                return;
+            }
+            
+            const headers = [
+                'ID', 'Name', 'Type', 'Branch', 'Designation', 'Nationality',
+                'Passport Expiry', 'Visa Expiry', 'Medical Expiry', 'Status',
+                'Last Updated'
+            ];
+            
+            let csv = headers.join(',') + '\n';
+            
+            employees.forEach(emp => {
+                const status = getOverallStatus(emp);
+                
                 const row = [
-                    s.label, s.icon, e.id, e.name, e.staffType||'new', e.nationality||'', e.branch||'', 
-                    e.joiningDate||'', e.passportExpiry||'', e.medicalExpiry||'', e.idVisaExp||'', e.notes||''
-                ].map(f => `"${f}"`).join(",");
-                csvContent += row + "\n";
+                    `"${emp.id}"`,
+                    `"${emp.name}"`,
+                    emp.staffType === 'new' ? 'New' : 'Existing',
+                    `"${emp.branch || ''}"`,
+                    `"${emp.designation || ''}"`,
+                    `"${emp.nationality || ''}"`,
+                    emp.passportExp || '',
+                    emp.visaExp || '',
+                    emp.medExpMain || '',
+                    status.label,
+                    emp.lastUpdated ? formatDate(emp.lastUpdated) : ''
+                ];
+                
+                csv += row.join(',') + '\n';
             });
             
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `HR_Report_${new Date().toISOString().slice(0,10)}.csv`);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `cc_hr_export_${new Date().toISOString().split('T')[0]}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast("Excel Downloaded");
+            
+            showToast('Data exported successfully', 'success');
         }
 
-        // --- EMAIL FIX ---
-        function sendReportEmail() {
-            const total = employees.length;
-            const working = employees.filter(e => getEmployeeStatus(e).class === 'status-working').length;
-            const issues = total - working;
-            
-            const body = `HR Report - ${new Date().toLocaleDateString()}\n\nTotal Staff: ${total}\nWorking: ${working}\nIssues: ${issues}\n\nGenerated by Crispy Chicken System.`;
-            
-            const email1 = "mohammed.t@crispychicken.rest";
-            const email2 = "kenawe@crispychicken.rest";
-            
-            window.location.href = `mailto:${email1},${email2}?subject=HR Report - ${new Date().toLocaleDateString()}&body=${encodeURIComponent(body)}`;
-            showToast("Email Client Opened");
-        }
-
-        // --- PRINT FIX ---
-        function printByIdInput() {
-            const id = document.getElementById('searchInput').value.trim();
-            if(employees.length === 0) { alert("No Data"); return; }
-            
-            const emp = employees.find(e => e.id.toLowerCase() === id.toLowerCase() || e.name.toLowerCase() === id.toLowerCase());
-            if(emp) {
-                printStaff(emp);
-            } else {
-                alert("Not Found");
-            }
-        }
-
-        function printCurrentModalView() {
-            const id = document.getElementById('editId').value;
-            if(id) {
-                const emp = employees.find(e => e.id === id);
-                if(emp) printStaff(emp);
-            } else {
-                alert("No record loaded. Please Click Edit (Pencil) first.");
-            }
-        }
-
-        function printStaff(emp) {
-            const s = getEmployeeStatus(emp);
-            const printHTML = `
-                <div class="print-header"><h1>CRISPY CHICKEN</h1><h3>Employee Status</h3></div>
-                <div class="print-status ${s.class === 'status-working' ? 'ready' : 'pending'}">
-                    STATUS: ${s.label.toUpperCase()}
-                </div>
-                <div class="print-grid">
-                    <div class="print-box"><div class="print-label">ID</div><div class="print-value">${emp.id}</div></div>
-                    <div class="print-box"><div class="print-label">Name</div><div class="print-value">${emp.name}</div></div>
-                    <div class="print-box"><div class="print-label">Branch</div><div class="print-value">${emp.branch}</div></div>
-                    <div class="print-box"><div class="print-label">Joining</div><div class="print-value">${emp.joiningDate}</div></div>
-                </div>
-                <div style="margin-top: 30px; text-align: right;">Printed: ${new Date().toLocaleString()}</div>
-            `;
-            document.getElementById('printArea').innerHTML = printHTML;
-            
-            // Force print after a slight delay to ensure DOM renders
-            setTimeout(() => { window.print(); }, 100);
-        }
-
-        // --- HELPERS ---
-        function openHelpModal() {
-            alert(`QUICK GUIDE:
-• Excel: Click 'Excel' to download CSV (with Arabic support).
-• Print: Type ID in search box -> Click 'Print Status'.
-• Email: Opens default email app.`);
-        }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        function showToast(msg) {
-            const t = document.getElementById("toast"); t.innerText = msg; t.className = "toast show";
-            setTimeout(() => t.className = t.className.replace("show", ""), 3000);
-        }
-        
-        // Notification Check
-        function checkExpiringDocuments() {
-            notifications = [];
-            employees.forEach(emp => {
-                const today = new Date(); today.setHours(0,0,0,0);
-                ['passportExpiry', 'medicalExpiry', 'idVisaExp'].forEach(field => {
-                    if(emp[field]) {
-                        const diff = Math.ceil((new Date(emp[field]) - today) / (1000*60*60*24));
-                        if(diff <= 0) notifications.push({ type: 'expired', title: `${emp.name} Expired`, date: emp[field] });
-                        else if(diff <= 30) notifications.push({ type: 'warning', title: `${emp.name} Expiring Soon`, date: emp[field] });
-                    }
+        // ====================== EVENT LISTENERS ======================
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.open').forEach(modal => {
+                    modal.classList.remove('open');
                 });
-            });
-            
-            const list = document.getElementById('notificationList');
-            list.innerHTML = notifications.length === 0 ? '<div style="padding:10px">No expiring documents</div>' : '';
-            
-            notifications.forEach(n => {
-                list.innerHTML += `<div class="notification-item"><div class="notification-icon ${n.type}"><i class="fas fa-exclamation-circle"></i></div><div class="notification-content">${n.title}<br><small>${n.date}</small></div></div>`;
-            });
-        }
-        function toggleNotifications() { document.getElementById('notificationPanel').classList.toggle('open'); }
+                document.body.style.overflow = 'auto';
+            }
+        });
 
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Initial data load
+        loadData();
+
+        console.log('🎉 Crispy Chicken HR System Ready!');
     </script>
 </body>
 </html>
