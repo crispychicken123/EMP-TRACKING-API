@@ -1,0 +1,76 @@
+{
+  "name": "control-tower-desktop",
+  "version": "1.0.0",
+  "description": "Control Tower - Desktop Application for Order & Delivery Management",
+  "main": "main.js",
+  "author": {
+    "name": "Control Tower",
+    "email": "support@controltower.app"
+  },
+  "license": "MIT",
+  "homepage": "https://controltower.app",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "dist:linux": "electron-builder --linux",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist": "electron-builder -mwl"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.controltower.app",
+    "productName": "Control Tower",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "server/**/*",
+      "server/.next/**/*",
+      "server/public/**/*",
+      "server/node_modules/**/*",
+      "server/server.js",
+      "server/package.json",
+      "icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "server",
+        "to": "server"
+      }
+    ],
+    "linux": {
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "deb", "arch": ["x64"] }
+      ],
+      "category": "Office",
+      "icon": "icon.png"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ],
+      "icon": "icon.png"
+    },
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] }
+      ],
+      "icon": "icon.png",
+      "category": "public.app-category.business"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
